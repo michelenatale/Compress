@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <Platforms>AnyCPU;x64</Platforms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TargetFramework>net8.0</TargetFramework>
+
+    <Authors>© Michele Natale 2024</Authors>
+    <Product>© MyHuffman 2024</Product>
+    <Company>© Michele Natale 2024</Company>
+    <Description>Huffman code. The classic among the compression codes.</Description>
+    <Copyright>© MyHuffman 2024, writted in DotNet8.0. Created by © Michele Natale 2024.</Copyright>
+  </PropertyGroup>
+
+</Project>
