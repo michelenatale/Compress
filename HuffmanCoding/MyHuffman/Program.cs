@@ -1,5 +1,5 @@
 ﻿
- 
+
 using System.Text;
 using System.Diagnostics;
 
@@ -17,6 +17,8 @@ public class Program
     TestCompress();
 
     TestCompressWitNewInstance();
+
+    TestCompressTextFromFile();
 
     TestBits();
 
@@ -41,7 +43,8 @@ public class Program
     if (!message.SequenceEqual(dec))
       throw new Exception();
 
-    Console.WriteLine($"Huffman {nameof(TestCompress)}_I: length = {message.Length}; t = {sw.ElapsedMilliseconds}ms.");
+    var r = 100.0 / message.Length * enc.Length;
+    Console.WriteLine($"Huffman {nameof(TestCompress)}_I: length = {message.Length}; t = {sw.ElapsedMilliseconds}ms; compress = {Math.Round(r, 3)}%.");
 
 
     sw = Stopwatch.StartNew();
@@ -52,13 +55,15 @@ public class Program
     dec = hf.Decode(enc);
     txt = Encoding.UTF8.GetString(dec);
     sw.Stop();
+
     if (!message.SequenceEqual(dec))
       throw new Exception();
 
     if (enc.Length >= message.Length)
       throw new Exception();
 
-    Console.WriteLine($"Huffman {nameof(TestCompress)}_II: length = {message.Length}; t = {sw.ElapsedMilliseconds}ms.\n");
+     r = 100.0 / message.Length * enc.Length;
+    Console.WriteLine($"Huffman {nameof(TestCompress)}_II: length = {message.Length}; t = {sw.ElapsedMilliseconds}ms; compress = {Math.Round(r, 3)}%.\n");
   }
 
 
@@ -77,7 +82,9 @@ public class Program
       throw new Exception();
     sw.Stop();
 
-    Console.WriteLine($"Huffman {nameof(TestCompressWitNewInstance)}_I: length = {message.Length}; t = {sw.ElapsedMilliseconds}ms.");
+
+    var r = 100.0 / message.Length * enc.Length;
+    Console.WriteLine($"Huffman {nameof(TestCompressWitNewInstance)}_I: length = {message.Length}; t = {sw.ElapsedMilliseconds}ms; compress = {Math.Round(r, 3)}%.");
 
     sw = Stopwatch.StartNew();
     //From 6 repetitions there is a compression
@@ -95,7 +102,25 @@ public class Program
     if (enc.Length >= message.Length)
       throw new Exception();
 
-    Console.WriteLine($"Huffman {nameof(TestCompressWitNewInstance)}_II: length = {message.Length}; t = {sw.ElapsedMilliseconds}ms.\n");
+    r = 100.0 / message.Length * enc.Length;
+    Console.WriteLine($"Huffman {nameof(TestCompressWitNewInstance)}_II: length = {message.Length}; t = {sw.ElapsedMilliseconds}ms; compress = {Math.Round(r, 3)}%.\n");
+  }
+
+  private static void TestCompressTextFromFile()
+  {
+    var sw = Stopwatch.StartNew();
+    var message = ToTextFile();
+    var hf = new Huffman(message);
+    var enc = hf.Encode();
+    var dec = hf.Decode(enc);
+    var txt = Encoding.UTF8.GetString(dec);
+
+    if (!message.SequenceEqual(dec))
+      throw new Exception();
+    sw.Stop();
+
+    var r = 100.0 / message.Length * enc.Length;
+    Console.WriteLine($"Huffman {nameof(TestCompressTextFromFile)}: length = {message.Length}; t = {sw.ElapsedMilliseconds}ms; compress = {Math.Round(r, 3)}%.\n");
   }
 
   private static void TestBits()
@@ -147,7 +172,7 @@ public class Program
 
     if (!message.SequenceEqual(decb))
       throw new Exception();
-
+ 
     Console.WriteLine($"Huffman {nameof(TestRandoms)}_I: length = {message.Length}; t = {sw.ElapsedMilliseconds}ms.");
 
     sw = Stopwatch.StartNew();
@@ -164,7 +189,8 @@ public class Program
     if (!message.SequenceEqual(dec))
       throw new Exception();
 
-    Console.WriteLine($"Huffman {nameof(TestRandoms)}_II: length = {message.Length}; t = {sw.ElapsedMilliseconds}ms.\n");
+    var r = 100.0 / message.Length * enc.Length;
+    Console.WriteLine($"Huffman {nameof(TestRandoms)}_II: length = {message.Length}; t = {sw.ElapsedMilliseconds}ms; compress = {Math.Round(r, 3)}%.\n");
 
   }
 
@@ -176,5 +202,16 @@ public class Program
         result.Append(str + separator);
       else result.Append(str);
     return result.ToString();
+  }
+
+
+  private static byte[] ToTextFile(string filename = "text.txt")
+  {
+    return Encoding.UTF8.GetBytes(ToTextFileString(filename));
+  }
+
+  private static string ToTextFileString(string filename = "text.txt")
+  {
+    return File.ReadAllText(filename, Encoding.UTF8);
   }
 }

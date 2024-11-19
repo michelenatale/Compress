@@ -14,4 +14,10 @@
     <Copyright>© MyHuffman 2024, writted in DotNet8.0. Created by © Michele Natale 2024.</Copyright>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Update="Text.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

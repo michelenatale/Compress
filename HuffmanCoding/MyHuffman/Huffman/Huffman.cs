@@ -1,5 +1,5 @@
 ﻿
-using System.Text;
+using System.Text; 
 
 
 namespace michele.natale.Compresses.Huffman;
@@ -32,23 +32,26 @@ public class Huffman
   public Huffman(ReadOnlySpan<byte> bytes)
   {
     this.Data = bytes.ToArray();
+    //var max = this.Data.Max();
     var groups = bytes.ToArray().GroupBy(x => x)
       .OrderBy(x => x.Count()).ThenBy(x => x.Key);
-    var nodes = groups.Select(x => new Node(x.Key.ToString(), x.Count(), null!, null!)).ToArray();
 
-    var huffman_tree = nodes.First();
-    for (var i = 1; i < nodes.Length; i++)
+    var pq = new PriorityQueue<HNode, int>();
+    var nodes = groups.Select(x => new HNode(x.Key.ToString(), x.Count(), null!, null!));
+    foreach (var itm in nodes) pq.Enqueue(itm, itm.Frequency);
+ 
+    while (pq.Count > 1)
     {
-      var b = nodes[i];
-      var a = huffman_tree;
+      var a = pq.Dequeue();
+      var b = pq.Dequeue();
       if (a.Frequency > b.Frequency) (a, b) = (b, a);
       var id = new StringBuilder(a.Id.ToString());
       id.Append(b.Id.ToString());
-      huffman_tree = new Node(
-        id, a.Frequency + b.Frequency, a, b);
-    }
+      var freq = a.Frequency + b.Frequency;
+      pq.Enqueue(new HNode(id, freq, a, b), freq);
+    } 
 
-    CreateCodes(huffman_tree, string.Empty, nodes.Length);
+    SetCodes(pq.Dequeue(), string.Empty, nodes.Count()); 
   }
 
   /// <summary>
@@ -70,10 +73,12 @@ public class Huffman
     bytes.Add(last);
     var serialize = SerializerCodes();
     var result = new byte[bytes.Count + serialize.Length + 2];
+
     Array.Copy(bytes.ToArray(), 0, result, 2, bytes.Count);
     Array.Copy(serialize, 0, result, bytes.Count + 2, serialize.Length);
     result[0] = (byte)(serialize.Length / 256);
     result[1] = (byte)(serialize.Length % 256);
+
     return result;
   }
 
@@ -160,7 +165,7 @@ public class Huffman
   }
 
 
-  private void CreateCodes(Node htree, string bits, int nodes_cnt)
+  private void SetCodes(HNode htree, string bits, int nodes_cnt)
   {
 
     if (nodes_cnt == 1)
@@ -172,10 +177,10 @@ public class Huffman
     else
     {
       if (htree.Left != null)
-        CreateCodes(htree.Left, bits + "0", nodes_cnt);
+        SetCodes(htree.Left, bits + "0", nodes_cnt);
 
       if (htree.Right != null)
-        CreateCodes(htree.Right, bits + "1", nodes_cnt);
+        SetCodes(htree.Right, bits + "1", nodes_cnt);
     }
   }
 
@@ -207,11 +212,11 @@ public class Huffman
   /// <summary>
   /// Private simple node class for handling the Huffman tools.
   /// </summary>
-  private class Node
+  private class HNode
   {
     public int Frequency = 0;
-    public Node Left = null!;
-    public Node Right = null!;
+    public HNode Left = null!;
+    public HNode Right = null!;
     public StringBuilder Id = null!;
 
     /// <summary>
@@ -221,7 +226,7 @@ public class Huffman
     /// <param name="frequence">Desired frequence</param>
     /// <param name="left">Desired Node left</param>
     /// <param name="right">Desired Node right</param>
-    public Node(string id, int frequence, Node left, Node right)
+    public HNode(string id, int frequence, HNode left, HNode right)
     {
       this.Left = left;
       this.Right = right;
@@ -236,7 +241,7 @@ public class Huffman
     /// <param name="frequence">Desired frequence</param>
     /// <param name="left">Desired Node left</param>
     /// <param name="right">Desired Node right</param>
-    public Node(StringBuilder id, int frequence, Node left, Node right)
+    public HNode(StringBuilder id, int frequence, HNode left, HNode right)
     {
       this.Id = id;
       this.Left = left;
