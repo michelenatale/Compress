@@ -37,7 +37,7 @@ public class Huffman
 
     var pq = new PriorityQueue<HNode, int>();
     var nodes = groups.Select(x => new HNode(x.Key.ToString(), x.Count(), null!, null!));
-    foreach (var itm in nodes) pq.Enqueue(itm, itm.Frequency);
+    Array.ForEach(nodes.ToArray(), x => pq.Enqueue(x, x.Frequency));
  
     while (pq.Count > 1)
     {
