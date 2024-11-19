@@ -32,7 +32,6 @@ public class Huffman
   public Huffman(ReadOnlySpan<byte> bytes)
   {
     this.Data = bytes.ToArray();
-    //var max = this.Data.Max();
     var groups = bytes.ToArray().GroupBy(x => x)
       .OrderBy(x => x.Count()).ThenBy(x => x.Key);
 
