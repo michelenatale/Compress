@@ -1,4 +1,5 @@
 ﻿
+using michele.natale.Compresses.Services;
 using System.Text; 
 
 
@@ -71,12 +72,16 @@ public class Huffman
 
     bytes.Add(last);
     var serialize = SerializerCodes();
+
+    ////With this variant of serialization, the compression would even be 
+    ////about 10% better, but in return about 3 times as much time is required.
+    //var serialize = ServiceSerialize.Serialize(this.Codes);
     var result = new byte[bytes.Count + serialize.Length + 2];
 
     Array.Copy(bytes.ToArray(), 0, result, 2, bytes.Count);
     Array.Copy(serialize, 0, result, bytes.Count + 2, serialize.Length);
-    result[0] = (byte)(serialize.Length / 256);
-    result[1] = (byte)(serialize.Length % 256);
+    result[1] = (byte)(serialize.Length / 256);
+    result[0] = (byte)(serialize.Length % 256);
 
     return result;
   }
@@ -126,8 +131,9 @@ public class Huffman
   /// <returns>Array of Byte</returns>
   public byte[] Decode(ReadOnlySpan<byte> enc)
   {
-    var l = enc[0] * 256 + enc[1];
+    var l = enc[1] * 256 + enc[0];
     DeserializerCodes(enc.Slice(enc.Length - l, l).ToArray());
+    //this.Codes = ServiceSerialize.Deserialize(enc.Slice(enc.Length - l, l).ToArray());
 
     var bytes = new byte[enc.Length - 2 - l];
     Array.Copy(enc.ToArray(), 2, bytes, 0, bytes.Length);
