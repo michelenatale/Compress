@@ -1,0 +1,310 @@
+Der Golomb-Code ist eine Entropiekodierung für alle nichtnegativen ganzen Zahlen, die im Gegensatz zu anderen Codes der Quellenkodierung nur einen endlichen Bereich (z. B. den Wertebereich 0–255) darstellen können. Er wurde 1966 von Solomon W. Golomb entwickelt.[1] Der Code verwendet wenige Bits für kleine und viele Bits für größere Zahlen. Dabei kann er über einen positiven, ganzzahligen Parameter gesteuert werden. Je größer der Parameter, desto langsamer wächst die Anzahl der zur Darstellung benötigten Bits, aber desto größer ist die Anzahl der minimal benötigten Bits für die kleinen Zahlen.
+
+Der Rice-Code ist eine Variante des Golomb-Codes, bei dem der Steuerparameter eine Zweierpotenz ist. Diese Einschränkung ist von Vorteil, da insbesondere in der digitalen Verarbeitung die Multiplikation bzw. Division von 2 sehr effizient implementiert werden kann. Der Rice-Code wurde 1971 von Robert F. Rice und J. Plaunt vorgestellt.[2] Einige Varianten des Rice-Codes werden auch als Exponentieller Golomb-Code (englisch: Exponential-Golomb Code) bezeichnet.
+
+Der Code kann im Bereich der verlustlosen Datenkompression verwendet werden, wenn die Wahrscheinlichkeiten der zu kodierenden Quellendaten (näherungsweise) eine geometrische Verteilung bilden. Typische Anwendungsbereiche sind, als ein Teilverfahren neben anderen Algorithmen, die Bildkompression und Audiodatenkompression. Beispielsweise verwenden das Videokompressionsformat H.264 und das Audiokompressionsformat FLAC[3] je eine verschiedene Variante des exponentiellen Golomb-Codes.
+
+
+Anwendung
+
+Der Golomb-Code kann angewendet werden, wenn Zahlen unbekannter Größe abgespeichert werden sollen, doch das eigentliche Anwendungsgebiet liegt in der Datenkompression.
+
+Wenn die Wahrscheinlichkeiten der Zahlen eine bestimmte Verteilung (geometrische Verteilung) aufweisen, dann kann der Golomb-Code ähnlich effizient wie der Huffman-Code sein, ist dabei aber sparsamer mit Speicher, leichter zu implementieren und schneller in der Ausführung.
+
+
+Exponentieller Golomb-Code
+
+Der exponentielle Golomb-Code ist eine weitere Variante des Rice-Codes und gleichzeitig identisch zum Elias-γ-Code, würde dort n + 1 kodiert.
+
+p wird für jede Zahl genau als p = ⌈log2(n + 1)⌉ gewählt, was der „natürlichen“ Bitbreite von n + 1 entspricht. Dann wird die unäre Codierung von q nicht mit „1“-Bits gefolgt von „0“, sondern mit „0“-Bits gefolgt von „1“ umgesetzt. Da die binär gespeicherte Zahl r immer an höchster Stelle eine „1“ aufweist, muss diese höchste „1“ nicht doppelt gespeichert werden. Die Enkodierung und Dekodierung vereinfachen sich somit zu folgenden Schritten:
+
+- Zum Kodieren von n: Schreibe p viele „0“-Bits, danach schreibe n + 1 mit der natürlichen Anzahl Bits.
+- Zum Dekodieren von n: Lese „0“-Bits bis einschließlich des ersten „1“-Bits, und lese so viele darauffolgende Bits, wie zuvor „0“-Bits gelesen wurden. Das Ergebnis ist dieser hintere Teil der kodierten Zahl minus 1.
+
+Es zeigt sich, dass eine separate Speicherung von p nicht notwendig ist, da es selbst Teil der kodierten Zahl ist.
+
+Verallgemeinerung für negative Zahlen
+
+Rice-Code und allgemeiner exponentieller Golomb-Code können zwar 0, aber keine negativen Zahlen kodieren. Dies wird durch eine der Zickzackkodierungen möglich gemacht, welche die negativen auf die positiven Zahlen abbilden, aber die Eigenschaften der Entropiekodierung erhalten; d. h. betragsmäßig kleine Zahlen werden weiterhin auf kleine Zahlen abgebildet. Konkret bildet man eine Hälfte der ganzen Zahlen auf die geraden natürlichen Zahlen ab und die andere Hälfte auf die ungeraden natürlichen Zahlen:
+
+Danach folgt normale Rice-Kodierung oder exponentielle Golomb-Kodierung. In der Praxis lassen sich sowohl De- als auch Enkodierung dieses Formats durch Benutzung von Bitmasken und Shifts beschleunigen.
+
+Der Golomb-Code ist eine Entropiekodierung für alle nichtnegativen ganzen Zahlen, die im Gegensatz zu anderen Codes der Quellenkodierung nur einen endlichen Bereich (z. B. den Wertebereich 0–255) darstellen können. Er wurde 1966 von Solomon W. Golomb entwickelt.[1] Der Code verwendet wenige Bits für kleine und viele Bits für größere Zahlen. Dabei kann er über einen positiven, ganzzahligen Parameter gesteuert werden. Je größer der Parameter, desto langsamer wächst die Anzahl der zur Darstellung benötigten Bits, aber desto größer ist die Anzahl der minimal benötigten Bits für die kleinen Zahlen.
+
+Der Rice-Code ist eine Variante des Golomb-Codes, bei dem der Steuerparameter eine Zweierpotenz ist. Diese Einschränkung ist von Vorteil, da insbesondere in der digitalen Verarbeitung die Multiplikation bzw. Division von 2 sehr effizient implementiert werden kann. Der Rice-Code wurde 1971 von Robert F. Rice und J. Plaunt vorgestellt.[2] Einige Varianten des Rice-Codes werden auch als Exponentieller Golomb-Code (englisch: Exponential-Golomb Code) bezeichnet.
+
+Der Code kann im Bereich der verlustlosen Datenkompression verwendet werden, wenn die Wahrscheinlichkeiten der zu kodierenden Quellendaten (näherungsweise) eine geometrische Verteilung bilden. Typische Anwendungsbereiche sind, als ein Teilverfahren neben anderen Algorithmen, die Bildkompression und Audiodatenkompression. Beispielsweise verwenden das Videokompressionsformat H.264 und das Audiokompressionsformat FLAC[3] je eine verschiedene Variante des exponentiellen Golomb-Codes.
+
+
+Anwendung
+
+Der Golomb-Code kann angewendet werden, wenn Zahlen unbekannter Größe abgespeichert werden sollen, doch das eigentliche Anwendungsgebiet liegt in der Datenkompression.
+
+Wenn die Wahrscheinlichkeiten der Zahlen eine bestimmte Verteilung (geometrische Verteilung) aufweisen, dann kann der Golomb-Code ähnlich effizient wie der Huffman-Code sein, ist dabei aber sparsamer mit Speicher, leichter zu implementieren und schneller in der Ausführung.
+
+
+Exponentieller Golomb-Code
+
+Der exponentielle Golomb-Code ist eine weitere Variante des Rice-Codes und gleichzeitig identisch zum Elias-γ-Code, würde dort n + 1 kodiert.
+
+p wird für jede Zahl genau als p = ⌈log2(n + 1)⌉ gewählt, was der „natürlichen“ Bitbreite von n + 1 entspricht. Dann wird die unäre Codierung von q nicht mit „1“-Bits gefolgt von „0“, sondern mit „0“-Bits gefolgt von „1“ umgesetzt. Da die binär gespeicherte Zahl r immer an höchster Stelle eine „1“ aufweist, muss diese höchste „1“ nicht doppelt gespeichert werden. Die Enkodierung und Dekodierung vereinfachen sich somit zu folgenden Schritten:
+
+- Zum Kodieren von n: Schreibe p viele „0“-Bits, danach schreibe n + 1 mit der natürlichen Anzahl Bits.
+- Zum Dekodieren von n: Lese „0“-Bits bis einschließlich des ersten „1“-Bits, und lese so viele darauffolgende Bits, wie zuvor „0“-Bits gelesen wurden. Das Ergebnis ist dieser hintere Teil der kodierten Zahl minus 1.
+
+Es zeigt sich, dass eine separate Speicherung von p nicht notwendig ist, da es selbst Teil der kodierten Zahl ist.
+
+Verallgemeinerung für negative Zahlen
+
+Rice-Code und allgemeiner exponentieller Golomb-Code können zwar 0, aber keine negativen Zahlen kodieren. Dies wird durch eine der Zickzackkodierungen möglich gemacht, welche die negativen auf die positiven Zahlen abbilden, aber die Eigenschaften der Entropiekodierung erhalten; d. h. betragsmäßig kleine Zahlen werden weiterhin auf kleine Zahlen abgebildet. Konkret bildet man eine Hälfte der ganzen Zahlen auf die geraden natürlichen Zahlen ab und die andere Hälfte auf die ungeraden natürlichen Zahlen:
+
+Danach folgt normale Rice-Kodierung oder exponentielle Golomb-Kodierung. In der Praxis lassen sich sowohl De- als auch Enkodierung dieses Formats durch Benutzung von Bitmasken und Shifts beschleunigen.
+
+Der Golomb-Code ist eine Entropiekodierung für alle nichtnegativen ganzen Zahlen, die im Gegensatz zu anderen Codes der Quellenkodierung nur einen endlichen Bereich (z. B. den Wertebereich 0–255) darstellen können. Er wurde 1966 von Solomon W. Golomb entwickelt.[1] Der Code verwendet wenige Bits für kleine und viele Bits für größere Zahlen. Dabei kann er über einen positiven, ganzzahligen Parameter gesteuert werden. Je größer der Parameter, desto langsamer wächst die Anzahl der zur Darstellung benötigten Bits, aber desto größer ist die Anzahl der minimal benötigten Bits für die kleinen Zahlen.
+
+Der Rice-Code ist eine Variante des Golomb-Codes, bei dem der Steuerparameter eine Zweierpotenz ist. Diese Einschränkung ist von Vorteil, da insbesondere in der digitalen Verarbeitung die Multiplikation bzw. Division von 2 sehr effizient implementiert werden kann. Der Rice-Code wurde 1971 von Robert F. Rice und J. Plaunt vorgestellt.[2] Einige Varianten des Rice-Codes werden auch als Exponentieller Golomb-Code (englisch: Exponential-Golomb Code) bezeichnet.
+
+Der Code kann im Bereich der verlustlosen Datenkompression verwendet werden, wenn die Wahrscheinlichkeiten der zu kodierenden Quellendaten (näherungsweise) eine geometrische Verteilung bilden. Typische Anwendungsbereiche sind, als ein Teilverfahren neben anderen Algorithmen, die Bildkompression und Audiodatenkompression. Beispielsweise verwenden das Videokompressionsformat H.264 und das Audiokompressionsformat FLAC[3] je eine verschiedene Variante des exponentiellen Golomb-Codes.
+
+
+Anwendung
+
+Der Golomb-Code kann angewendet werden, wenn Zahlen unbekannter Größe abgespeichert werden sollen, doch das eigentliche Anwendungsgebiet liegt in der Datenkompression.
+
+Wenn die Wahrscheinlichkeiten der Zahlen eine bestimmte Verteilung (geometrische Verteilung) aufweisen, dann kann der Golomb-Code ähnlich effizient wie der Huffman-Code sein, ist dabei aber sparsamer mit Speicher, leichter zu implementieren und schneller in der Ausführung.
+
+
+Exponentieller Golomb-Code
+
+Der exponentielle Golomb-Code ist eine weitere Variante des Rice-Codes und gleichzeitig identisch zum Elias-γ-Code, würde dort n + 1 kodiert.
+
+p wird für jede Zahl genau als p = ⌈log2(n + 1)⌉ gewählt, was der „natürlichen“ Bitbreite von n + 1 entspricht. Dann wird die unäre Codierung von q nicht mit „1“-Bits gefolgt von „0“, sondern mit „0“-Bits gefolgt von „1“ umgesetzt. Da die binär gespeicherte Zahl r immer an höchster Stelle eine „1“ aufweist, muss diese höchste „1“ nicht doppelt gespeichert werden. Die Enkodierung und Dekodierung vereinfachen sich somit zu folgenden Schritten:
+
+- Zum Kodieren von n: Schreibe p viele „0“-Bits, danach schreibe n + 1 mit der natürlichen Anzahl Bits.
+- Zum Dekodieren von n: Lese „0“-Bits bis einschließlich des ersten „1“-Bits, und lese so viele darauffolgende Bits, wie zuvor „0“-Bits gelesen wurden. Das Ergebnis ist dieser hintere Teil der kodierten Zahl minus 1.
+
+Es zeigt sich, dass eine separate Speicherung von p nicht notwendig ist, da es selbst Teil der kodierten Zahl ist.
+
+Verallgemeinerung für negative Zahlen
+
+Rice-Code und allgemeiner exponentieller Golomb-Code können zwar 0, aber keine negativen Zahlen kodieren. Dies wird durch eine der Zickzackkodierungen möglich gemacht, welche die negativen auf die positiven Zahlen abbilden, aber die Eigenschaften der Entropiekodierung erhalten; d. h. betragsmäßig kleine Zahlen werden weiterhin auf kleine Zahlen abgebildet. Konkret bildet man eine Hälfte der ganzen Zahlen auf die geraden natürlichen Zahlen ab und die andere Hälfte auf die ungeraden natürlichen Zahlen:
+
+Danach folgt normale Rice-Kodierung oder exponentielle Golomb-Kodierung. In der Praxis lassen sich sowohl De- als auch Enkodierung dieses Formats durch Benutzung von Bitmasken und Shifts beschleunigen.
+
+Der Golomb-Code ist eine Entropiekodierung für alle nichtnegativen ganzen Zahlen, die im Gegensatz zu anderen Codes der Quellenkodierung nur einen endlichen Bereich (z. B. den Wertebereich 0–255) darstellen können. Er wurde 1966 von Solomon W. Golomb entwickelt.[1] Der Code verwendet wenige Bits für kleine und viele Bits für größere Zahlen. Dabei kann er über einen positiven, ganzzahligen Parameter gesteuert werden. Je größer der Parameter, desto langsamer wächst die Anzahl der zur Darstellung benötigten Bits, aber desto größer ist die Anzahl der minimal benötigten Bits für die kleinen Zahlen.
+
+Der Rice-Code ist eine Variante des Golomb-Codes, bei dem der Steuerparameter eine Zweierpotenz ist. Diese Einschränkung ist von Vorteil, da insbesondere in der digitalen Verarbeitung die Multiplikation bzw. Division von 2 sehr effizient implementiert werden kann. Der Rice-Code wurde 1971 von Robert F. Rice und J. Plaunt vorgestellt.[2] Einige Varianten des Rice-Codes werden auch als Exponentieller Golomb-Code (englisch: Exponential-Golomb Code) bezeichnet.
+
+Der Code kann im Bereich der verlustlosen Datenkompression verwendet werden, wenn die Wahrscheinlichkeiten der zu kodierenden Quellendaten (näherungsweise) eine geometrische Verteilung bilden. Typische Anwendungsbereiche sind, als ein Teilverfahren neben anderen Algorithmen, die Bildkompression und Audiodatenkompression. Beispielsweise verwenden das Videokompressionsformat H.264 und das Audiokompressionsformat FLAC[3] je eine verschiedene Variante des exponentiellen Golomb-Codes.
+
+
+Anwendung
+
+Der Golomb-Code kann angewendet werden, wenn Zahlen unbekannter Größe abgespeichert werden sollen, doch das eigentliche Anwendungsgebiet liegt in der Datenkompression.
+
+Wenn die Wahrscheinlichkeiten der Zahlen eine bestimmte Verteilung (geometrische Verteilung) aufweisen, dann kann der Golomb-Code ähnlich effizient wie der Huffman-Code sein, ist dabei aber sparsamer mit Speicher, leichter zu implementieren und schneller in der Ausführung.
+
+
+Exponentieller Golomb-Code
+
+Der exponentielle Golomb-Code ist eine weitere Variante des Rice-Codes und gleichzeitig identisch zum Elias-γ-Code, würde dort n + 1 kodiert.
+
+p wird für jede Zahl genau als p = ⌈log2(n + 1)⌉ gewählt, was der „natürlichen“ Bitbreite von n + 1 entspricht. Dann wird die unäre Codierung von q nicht mit „1“-Bits gefolgt von „0“, sondern mit „0“-Bits gefolgt von „1“ umgesetzt. Da die binär gespeicherte Zahl r immer an höchster Stelle eine „1“ aufweist, muss diese höchste „1“ nicht doppelt gespeichert werden. Die Enkodierung und Dekodierung vereinfachen sich somit zu folgenden Schritten:
+
+- Zum Kodieren von n: Schreibe p viele „0“-Bits, danach schreibe n + 1 mit der natürlichen Anzahl Bits.
+- Zum Dekodieren von n: Lese „0“-Bits bis einschließlich des ersten „1“-Bits, und lese so viele darauffolgende Bits, wie zuvor „0“-Bits gelesen wurden. Das Ergebnis ist dieser hintere Teil der kodierten Zahl minus 1.
+
+Es zeigt sich, dass eine separate Speicherung von p nicht notwendig ist, da es selbst Teil der kodierten Zahl ist.
+
+Verallgemeinerung für negative Zahlen
+
+Rice-Code und allgemeiner exponentieller Golomb-Code können zwar 0, aber keine negativen Zahlen kodieren. Dies wird durch eine der Zickzackkodierungen möglich gemacht, welche die negativen auf die positiven Zahlen abbilden, aber die Eigenschaften der Entropiekodierung erhalten; d. h. betragsmäßig kleine Zahlen werden weiterhin auf kleine Zahlen abgebildet. Konkret bildet man eine Hälfte der ganzen Zahlen auf die geraden natürlichen Zahlen ab und die andere Hälfte auf die ungeraden natürlichen Zahlen:
+
+Danach folgt normale Rice-Kodierung oder exponentielle Golomb-Kodierung. In der Praxis lassen sich sowohl De- als auch Enkodierung dieses Formats durch Benutzung von Bitmasken und Shifts beschleunigen.
+
+Der Golomb-Code ist eine Entropiekodierung für alle nichtnegativen ganzen Zahlen, die im Gegensatz zu anderen Codes der Quellenkodierung nur einen endlichen Bereich (z. B. den Wertebereich 0–255) darstellen können. Er wurde 1966 von Solomon W. Golomb entwickelt.[1] Der Code verwendet wenige Bits für kleine und viele Bits für größere Zahlen. Dabei kann er über einen positiven, ganzzahligen Parameter gesteuert werden. Je größer der Parameter, desto langsamer wächst die Anzahl der zur Darstellung benötigten Bits, aber desto größer ist die Anzahl der minimal benötigten Bits für die kleinen Zahlen.
+
+Der Rice-Code ist eine Variante des Golomb-Codes, bei dem der Steuerparameter eine Zweierpotenz ist. Diese Einschränkung ist von Vorteil, da insbesondere in der digitalen Verarbeitung die Multiplikation bzw. Division von 2 sehr effizient implementiert werden kann. Der Rice-Code wurde 1971 von Robert F. Rice und J. Plaunt vorgestellt.[2] Einige Varianten des Rice-Codes werden auch als Exponentieller Golomb-Code (englisch: Exponential-Golomb Code) bezeichnet.
+
+Der Code kann im Bereich der verlustlosen Datenkompression verwendet werden, wenn die Wahrscheinlichkeiten der zu kodierenden Quellendaten (näherungsweise) eine geometrische Verteilung bilden. Typische Anwendungsbereiche sind, als ein Teilverfahren neben anderen Algorithmen, die Bildkompression und Audiodatenkompression. Beispielsweise verwenden das Videokompressionsformat H.264 und das Audiokompressionsformat FLAC[3] je eine verschiedene Variante des exponentiellen Golomb-Codes.
+
+
+Anwendung
+
+Der Golomb-Code kann angewendet werden, wenn Zahlen unbekannter Größe abgespeichert werden sollen, doch das eigentliche Anwendungsgebiet liegt in der Datenkompression.
+
+Wenn die Wahrscheinlichkeiten der Zahlen eine bestimmte Verteilung (geometrische Verteilung) aufweisen, dann kann der Golomb-Code ähnlich effizient wie der Huffman-Code sein, ist dabei aber sparsamer mit Speicher, leichter zu implementieren und schneller in der Ausführung.
+
+
+Exponentieller Golomb-Code
+
+Der exponentielle Golomb-Code ist eine weitere Variante des Rice-Codes und gleichzeitig identisch zum Elias-γ-Code, würde dort n + 1 kodiert.
+
+p wird für jede Zahl genau als p = ⌈log2(n + 1)⌉ gewählt, was der „natürlichen“ Bitbreite von n + 1 entspricht. Dann wird die unäre Codierung von q nicht mit „1“-Bits gefolgt von „0“, sondern mit „0“-Bits gefolgt von „1“ umgesetzt. Da die binär gespeicherte Zahl r immer an höchster Stelle eine „1“ aufweist, muss diese höchste „1“ nicht doppelt gespeichert werden. Die Enkodierung und Dekodierung vereinfachen sich somit zu folgenden Schritten:
+
+- Zum Kodieren von n: Schreibe p viele „0“-Bits, danach schreibe n + 1 mit der natürlichen Anzahl Bits.
+- Zum Dekodieren von n: Lese „0“-Bits bis einschließlich des ersten „1“-Bits, und lese so viele darauffolgende Bits, wie zuvor „0“-Bits gelesen wurden. Das Ergebnis ist dieser hintere Teil der kodierten Zahl minus 1.
+
+Es zeigt sich, dass eine separate Speicherung von p nicht notwendig ist, da es selbst Teil der kodierten Zahl ist.
+
+Verallgemeinerung für negative Zahlen
+
+Rice-Code und allgemeiner exponentieller Golomb-Code können zwar 0, aber keine negativen Zahlen kodieren. Dies wird durch eine der Zickzackkodierungen möglich gemacht, welche die negativen auf die positiven Zahlen abbilden, aber die Eigenschaften der Entropiekodierung erhalten; d. h. betragsmäßig kleine Zahlen werden weiterhin auf kleine Zahlen abgebildet. Konkret bildet man eine Hälfte der ganzen Zahlen auf die geraden natürlichen Zahlen ab und die andere Hälfte auf die ungeraden natürlichen Zahlen:
+
+Danach folgt normale Rice-Kodierung oder exponentielle Golomb-Kodierung. In der Praxis lassen sich sowohl De- als auch Enkodierung dieses Formats durch Benutzung von Bitmasken und Shifts beschleunigen.
+
+Der Golomb-Code ist eine Entropiekodierung für alle nichtnegativen ganzen Zahlen, die im Gegensatz zu anderen Codes der Quellenkodierung nur einen endlichen Bereich (z. B. den Wertebereich 0–255) darstellen können. Er wurde 1966 von Solomon W. Golomb entwickelt.[1] Der Code verwendet wenige Bits für kleine und viele Bits für größere Zahlen. Dabei kann er über einen positiven, ganzzahligen Parameter gesteuert werden. Je größer der Parameter, desto langsamer wächst die Anzahl der zur Darstellung benötigten Bits, aber desto größer ist die Anzahl der minimal benötigten Bits für die kleinen Zahlen.
+
+Der Rice-Code ist eine Variante des Golomb-Codes, bei dem der Steuerparameter eine Zweierpotenz ist. Diese Einschränkung ist von Vorteil, da insbesondere in der digitalen Verarbeitung die Multiplikation bzw. Division von 2 sehr effizient implementiert werden kann. Der Rice-Code wurde 1971 von Robert F. Rice und J. Plaunt vorgestellt.[2] Einige Varianten des Rice-Codes werden auch als Exponentieller Golomb-Code (englisch: Exponential-Golomb Code) bezeichnet.
+
+Der Code kann im Bereich der verlustlosen Datenkompression verwendet werden, wenn die Wahrscheinlichkeiten der zu kodierenden Quellendaten (näherungsweise) eine geometrische Verteilung bilden. Typische Anwendungsbereiche sind, als ein Teilverfahren neben anderen Algorithmen, die Bildkompression und Audiodatenkompression. Beispielsweise verwenden das Videokompressionsformat H.264 und das Audiokompressionsformat FLAC[3] je eine verschiedene Variante des exponentiellen Golomb-Codes.
+
+
+Anwendung
+
+Der Golomb-Code kann angewendet werden, wenn Zahlen unbekannter Größe abgespeichert werden sollen, doch das eigentliche Anwendungsgebiet liegt in der Datenkompression.
+
+Wenn die Wahrscheinlichkeiten der Zahlen eine bestimmte Verteilung (geometrische Verteilung) aufweisen, dann kann der Golomb-Code ähnlich effizient wie der Huffman-Code sein, ist dabei aber sparsamer mit Speicher, leichter zu implementieren und schneller in der Ausführung.
+
+
+Exponentieller Golomb-Code
+
+Der exponentielle Golomb-Code ist eine weitere Variante des Rice-Codes und gleichzeitig identisch zum Elias-γ-Code, würde dort n + 1 kodiert.
+
+p wird für jede Zahl genau als p = ⌈log2(n + 1)⌉ gewählt, was der „natürlichen“ Bitbreite von n + 1 entspricht. Dann wird die unäre Codierung von q nicht mit „1“-Bits gefolgt von „0“, sondern mit „0“-Bits gefolgt von „1“ umgesetzt. Da die binär gespeicherte Zahl r immer an höchster Stelle eine „1“ aufweist, muss diese höchste „1“ nicht doppelt gespeichert werden. Die Enkodierung und Dekodierung vereinfachen sich somit zu folgenden Schritten:
+
+- Zum Kodieren von n: Schreibe p viele „0“-Bits, danach schreibe n + 1 mit der natürlichen Anzahl Bits.
+- Zum Dekodieren von n: Lese „0“-Bits bis einschließlich des ersten „1“-Bits, und lese so viele darauffolgende Bits, wie zuvor „0“-Bits gelesen wurden. Das Ergebnis ist dieser hintere Teil der kodierten Zahl minus 1.
+
+Es zeigt sich, dass eine separate Speicherung von p nicht notwendig ist, da es selbst Teil der kodierten Zahl ist.
+
+Verallgemeinerung für negative Zahlen
+
+Rice-Code und allgemeiner exponentieller Golomb-Code können zwar 0, aber keine negativen Zahlen kodieren. Dies wird durch eine der Zickzackkodierungen möglich gemacht, welche die negativen auf die positiven Zahlen abbilden, aber die Eigenschaften der Entropiekodierung erhalten; d. h. betragsmäßig kleine Zahlen werden weiterhin auf kleine Zahlen abgebildet. Konkret bildet man eine Hälfte der ganzen Zahlen auf die geraden natürlichen Zahlen ab und die andere Hälfte auf die ungeraden natürlichen Zahlen:
+
+Danach folgt normale Rice-Kodierung oder exponentielle Golomb-Kodierung. In der Praxis lassen sich sowohl De- als auch Enkodierung dieses Formats durch Benutzung von Bitmasken und Shifts beschleunigen.
+
+Der Golomb-Code ist eine Entropiekodierung für alle nichtnegativen ganzen Zahlen, die im Gegensatz zu anderen Codes der Quellenkodierung nur einen endlichen Bereich (z. B. den Wertebereich 0–255) darstellen können. Er wurde 1966 von Solomon W. Golomb entwickelt.[1] Der Code verwendet wenige Bits für kleine und viele Bits für größere Zahlen. Dabei kann er über einen positiven, ganzzahligen Parameter gesteuert werden. Je größer der Parameter, desto langsamer wächst die Anzahl der zur Darstellung benötigten Bits, aber desto größer ist die Anzahl der minimal benötigten Bits für die kleinen Zahlen.
+
+Der Rice-Code ist eine Variante des Golomb-Codes, bei dem der Steuerparameter eine Zweierpotenz ist. Diese Einschränkung ist von Vorteil, da insbesondere in der digitalen Verarbeitung die Multiplikation bzw. Division von 2 sehr effizient implementiert werden kann. Der Rice-Code wurde 1971 von Robert F. Rice und J. Plaunt vorgestellt.[2] Einige Varianten des Rice-Codes werden auch als Exponentieller Golomb-Code (englisch: Exponential-Golomb Code) bezeichnet.
+
+Der Code kann im Bereich der verlustlosen Datenkompression verwendet werden, wenn die Wahrscheinlichkeiten der zu kodierenden Quellendaten (näherungsweise) eine geometrische Verteilung bilden. Typische Anwendungsbereiche sind, als ein Teilverfahren neben anderen Algorithmen, die Bildkompression und Audiodatenkompression. Beispielsweise verwenden das Videokompressionsformat H.264 und das Audiokompressionsformat FLAC[3] je eine verschiedene Variante des exponentiellen Golomb-Codes.
+
+
+Anwendung
+
+Der Golomb-Code kann angewendet werden, wenn Zahlen unbekannter Größe abgespeichert werden sollen, doch das eigentliche Anwendungsgebiet liegt in der Datenkompression.
+
+Wenn die Wahrscheinlichkeiten der Zahlen eine bestimmte Verteilung (geometrische Verteilung) aufweisen, dann kann der Golomb-Code ähnlich effizient wie der Huffman-Code sein, ist dabei aber sparsamer mit Speicher, leichter zu implementieren und schneller in der Ausführung.
+
+
+Exponentieller Golomb-Code
+
+Der exponentielle Golomb-Code ist eine weitere Variante des Rice-Codes und gleichzeitig identisch zum Elias-γ-Code, würde dort n + 1 kodiert.
+
+p wird für jede Zahl genau als p = ⌈log2(n + 1)⌉ gewählt, was der „natürlichen“ Bitbreite von n + 1 entspricht. Dann wird die unäre Codierung von q nicht mit „1“-Bits gefolgt von „0“, sondern mit „0“-Bits gefolgt von „1“ umgesetzt. Da die binär gespeicherte Zahl r immer an höchster Stelle eine „1“ aufweist, muss diese höchste „1“ nicht doppelt gespeichert werden. Die Enkodierung und Dekodierung vereinfachen sich somit zu folgenden Schritten:
+
+- Zum Kodieren von n: Schreibe p viele „0“-Bits, danach schreibe n + 1 mit der natürlichen Anzahl Bits.
+- Zum Dekodieren von n: Lese „0“-Bits bis einschließlich des ersten „1“-Bits, und lese so viele darauffolgende Bits, wie zuvor „0“-Bits gelesen wurden. Das Ergebnis ist dieser hintere Teil der kodierten Zahl minus 1.
+
+Es zeigt sich, dass eine separate Speicherung von p nicht notwendig ist, da es selbst Teil der kodierten Zahl ist.
+
+Verallgemeinerung für negative Zahlen
+
+Rice-Code und allgemeiner exponentieller Golomb-Code können zwar 0, aber keine negativen Zahlen kodieren. Dies wird durch eine der Zickzackkodierungen möglich gemacht, welche die negativen auf die positiven Zahlen abbilden, aber die Eigenschaften der Entropiekodierung erhalten; d. h. betragsmäßig kleine Zahlen werden weiterhin auf kleine Zahlen abgebildet. Konkret bildet man eine Hälfte der ganzen Zahlen auf die geraden natürlichen Zahlen ab und die andere Hälfte auf die ungeraden natürlichen Zahlen:
+
+Danach folgt normale Rice-Kodierung oder exponentielle Golomb-Kodierung. In der Praxis lassen sich sowohl De- als auch Enkodierung dieses Formats durch Benutzung von Bitmasken und Shifts beschleunigen.
+
+Der Golomb-Code ist eine Entropiekodierung für alle nichtnegativen ganzen Zahlen, die im Gegensatz zu anderen Codes der Quellenkodierung nur einen endlichen Bereich (z. B. den Wertebereich 0–255) darstellen können. Er wurde 1966 von Solomon W. Golomb entwickelt.[1] Der Code verwendet wenige Bits für kleine und viele Bits für größere Zahlen. Dabei kann er über einen positiven, ganzzahligen Parameter gesteuert werden. Je größer der Parameter, desto langsamer wächst die Anzahl der zur Darstellung benötigten Bits, aber desto größer ist die Anzahl der minimal benötigten Bits für die kleinen Zahlen.
+
+Der Rice-Code ist eine Variante des Golomb-Codes, bei dem der Steuerparameter eine Zweierpotenz ist. Diese Einschränkung ist von Vorteil, da insbesondere in der digitalen Verarbeitung die Multiplikation bzw. Division von 2 sehr effizient implementiert werden kann. Der Rice-Code wurde 1971 von Robert F. Rice und J. Plaunt vorgestellt.[2] Einige Varianten des Rice-Codes werden auch als Exponentieller Golomb-Code (englisch: Exponential-Golomb Code) bezeichnet.
+
+Der Code kann im Bereich der verlustlosen Datenkompression verwendet werden, wenn die Wahrscheinlichkeiten der zu kodierenden Quellendaten (näherungsweise) eine geometrische Verteilung bilden. Typische Anwendungsbereiche sind, als ein Teilverfahren neben anderen Algorithmen, die Bildkompression und Audiodatenkompression. Beispielsweise verwenden das Videokompressionsformat H.264 und das Audiokompressionsformat FLAC[3] je eine verschiedene Variante des exponentiellen Golomb-Codes.
+
+
+Anwendung
+
+Der Golomb-Code kann angewendet werden, wenn Zahlen unbekannter Größe abgespeichert werden sollen, doch das eigentliche Anwendungsgebiet liegt in der Datenkompression.
+
+Wenn die Wahrscheinlichkeiten der Zahlen eine bestimmte Verteilung (geometrische Verteilung) aufweisen, dann kann der Golomb-Code ähnlich effizient wie der Huffman-Code sein, ist dabei aber sparsamer mit Speicher, leichter zu implementieren und schneller in der Ausführung.
+
+
+Exponentieller Golomb-Code
+
+Der exponentielle Golomb-Code ist eine weitere Variante des Rice-Codes und gleichzeitig identisch zum Elias-γ-Code, würde dort n + 1 kodiert.
+
+p wird für jede Zahl genau als p = ⌈log2(n + 1)⌉ gewählt, was der „natürlichen“ Bitbreite von n + 1 entspricht. Dann wird die unäre Codierung von q nicht mit „1“-Bits gefolgt von „0“, sondern mit „0“-Bits gefolgt von „1“ umgesetzt. Da die binär gespeicherte Zahl r immer an höchster Stelle eine „1“ aufweist, muss diese höchste „1“ nicht doppelt gespeichert werden. Die Enkodierung und Dekodierung vereinfachen sich somit zu folgenden Schritten:
+
+- Zum Kodieren von n: Schreibe p viele „0“-Bits, danach schreibe n + 1 mit der natürlichen Anzahl Bits.
+- Zum Dekodieren von n: Lese „0“-Bits bis einschließlich des ersten „1“-Bits, und lese so viele darauffolgende Bits, wie zuvor „0“-Bits gelesen wurden. Das Ergebnis ist dieser hintere Teil der kodierten Zahl minus 1.
+
+Es zeigt sich, dass eine separate Speicherung von p nicht notwendig ist, da es selbst Teil der kodierten Zahl ist.
+
+Verallgemeinerung für negative Zahlen
+
+Rice-Code und allgemeiner exponentieller Golomb-Code können zwar 0, aber keine negativen Zahlen kodieren. Dies wird durch eine der Zickzackkodierungen möglich gemacht, welche die negativen auf die positiven Zahlen abbilden, aber die Eigenschaften der Entropiekodierung erhalten; d. h. betragsmäßig kleine Zahlen werden weiterhin auf kleine Zahlen abgebildet. Konkret bildet man eine Hälfte der ganzen Zahlen auf die geraden natürlichen Zahlen ab und die andere Hälfte auf die ungeraden natürlichen Zahlen:
+
+Danach folgt normale Rice-Kodierung oder exponentielle Golomb-Kodierung. In der Praxis lassen sich sowohl De- als auch Enkodierung dieses Formats durch Benutzung von Bitmasken und Shifts beschleunigen.
+
+Der Golomb-Code ist eine Entropiekodierung für alle nichtnegativen ganzen Zahlen, die im Gegensatz zu anderen Codes der Quellenkodierung nur einen endlichen Bereich (z. B. den Wertebereich 0–255) darstellen können. Er wurde 1966 von Solomon W. Golomb entwickelt.[1] Der Code verwendet wenige Bits für kleine und viele Bits für größere Zahlen. Dabei kann er über einen positiven, ganzzahligen Parameter gesteuert werden. Je größer der Parameter, desto langsamer wächst die Anzahl der zur Darstellung benötigten Bits, aber desto größer ist die Anzahl der minimal benötigten Bits für die kleinen Zahlen.
+
+Der Rice-Code ist eine Variante des Golomb-Codes, bei dem der Steuerparameter eine Zweierpotenz ist. Diese Einschränkung ist von Vorteil, da insbesondere in der digitalen Verarbeitung die Multiplikation bzw. Division von 2 sehr effizient implementiert werden kann. Der Rice-Code wurde 1971 von Robert F. Rice und J. Plaunt vorgestellt.[2] Einige Varianten des Rice-Codes werden auch als Exponentieller Golomb-Code (englisch: Exponential-Golomb Code) bezeichnet.
+
+Der Code kann im Bereich der verlustlosen Datenkompression verwendet werden, wenn die Wahrscheinlichkeiten der zu kodierenden Quellendaten (näherungsweise) eine geometrische Verteilung bilden. Typische Anwendungsbereiche sind, als ein Teilverfahren neben anderen Algorithmen, die Bildkompression und Audiodatenkompression. Beispielsweise verwenden das Videokompressionsformat H.264 und das Audiokompressionsformat FLAC[3] je eine verschiedene Variante des exponentiellen Golomb-Codes.
+
+
+Anwendung
+
+Der Golomb-Code kann angewendet werden, wenn Zahlen unbekannter Größe abgespeichert werden sollen, doch das eigentliche Anwendungsgebiet liegt in der Datenkompression.
+
+Wenn die Wahrscheinlichkeiten der Zahlen eine bestimmte Verteilung (geometrische Verteilung) aufweisen, dann kann der Golomb-Code ähnlich effizient wie der Huffman-Code sein, ist dabei aber sparsamer mit Speicher, leichter zu implementieren und schneller in der Ausführung.
+
+
+Exponentieller Golomb-Code
+
+Der exponentielle Golomb-Code ist eine weitere Variante des Rice-Codes und gleichzeitig identisch zum Elias-γ-Code, würde dort n + 1 kodiert.
+
+p wird für jede Zahl genau als p = ⌈log2(n + 1)⌉ gewählt, was der „natürlichen“ Bitbreite von n + 1 entspricht. Dann wird die unäre Codierung von q nicht mit „1“-Bits gefolgt von „0“, sondern mit „0“-Bits gefolgt von „1“ umgesetzt. Da die binär gespeicherte Zahl r immer an höchster Stelle eine „1“ aufweist, muss diese höchste „1“ nicht doppelt gespeichert werden. Die Enkodierung und Dekodierung vereinfachen sich somit zu folgenden Schritten:
+
+- Zum Kodieren von n: Schreibe p viele „0“-Bits, danach schreibe n + 1 mit der natürlichen Anzahl Bits.
+- Zum Dekodieren von n: Lese „0“-Bits bis einschließlich des ersten „1“-Bits, und lese so viele darauffolgende Bits, wie zuvor „0“-Bits gelesen wurden. Das Ergebnis ist dieser hintere Teil der kodierten Zahl minus 1.
+
+Es zeigt sich, dass eine separate Speicherung von p nicht notwendig ist, da es selbst Teil der kodierten Zahl ist.
+
+Verallgemeinerung für negative Zahlen
+
+Rice-Code und allgemeiner exponentieller Golomb-Code können zwar 0, aber keine negativen Zahlen kodieren. Dies wird durch eine der Zickzackkodierungen möglich gemacht, welche die negativen auf die positiven Zahlen abbilden, aber die Eigenschaften der Entropiekodierung erhalten; d. h. betragsmäßig kleine Zahlen werden weiterhin auf kleine Zahlen abgebildet. Konkret bildet man eine Hälfte der ganzen Zahlen auf die geraden natürlichen Zahlen ab und die andere Hälfte auf die ungeraden natürlichen Zahlen:
+
+Danach folgt normale Rice-Kodierung oder exponentielle Golomb-Kodierung. In der Praxis lassen sich sowohl De- als auch Enkodierung dieses Formats durch Benutzung von Bitmasken und Shifts beschleunigen.
+
+Der Golomb-Code ist eine Entropiekodierung für alle nichtnegativen ganzen Zahlen, die im Gegensatz zu anderen Codes der Quellenkodierung nur einen endlichen Bereich (z. B. den Wertebereich 0–255) darstellen können. Er wurde 1966 von Solomon W. Golomb entwickelt.[1] Der Code verwendet wenige Bits für kleine und viele Bits für größere Zahlen. Dabei kann er über einen positiven, ganzzahligen Parameter gesteuert werden. Je größer der Parameter, desto langsamer wächst die Anzahl der zur Darstellung benötigten Bits, aber desto größer ist die Anzahl der minimal benötigten Bits für die kleinen Zahlen.
+
+Der Rice-Code ist eine Variante des Golomb-Codes, bei dem der Steuerparameter eine Zweierpotenz ist. Diese Einschränkung ist von Vorteil, da insbesondere in der digitalen Verarbeitung die Multiplikation bzw. Division von 2 sehr effizient implementiert werden kann. Der Rice-Code wurde 1971 von Robert F. Rice und J. Plaunt vorgestellt.[2] Einige Varianten des Rice-Codes werden auch als Exponentieller Golomb-Code (englisch: Exponential-Golomb Code) bezeichnet.
+
+Der Code kann im Bereich der verlustlosen Datenkompression verwendet werden, wenn die Wahrscheinlichkeiten der zu kodierenden Quellendaten (näherungsweise) eine geometrische Verteilung bilden. Typische Anwendungsbereiche sind, als ein Teilverfahren neben anderen Algorithmen, die Bildkompression und Audiodatenkompression. Beispielsweise verwenden das Videokompressionsformat H.264 und das Audiokompressionsformat FLAC[3] je eine verschiedene Variante des exponentiellen Golomb-Codes.
+
+
+Anwendung
+
+Der Golomb-Code kann angewendet werden, wenn Zahlen unbekannter Größe abgespeichert werden sollen, doch das eigentliche Anwendungsgebiet liegt in der Datenkompression.
+
+Wenn die Wahrscheinlichkeiten der Zahlen eine bestimmte Verteilung (geometrische Verteilung) aufweisen, dann kann der Golomb-Code ähnlich effizient wie der Huffman-Code sein, ist dabei aber sparsamer mit Speicher, leichter zu implementieren und schneller in der Ausführung.
+
+
+Exponentieller Golomb-Code
+
+Der exponentielle Golomb-Code ist eine weitere Variante des Rice-Codes und gleichzeitig identisch zum Elias-γ-Code, würde dort n + 1 kodiert.
+
+p wird für jede Zahl genau als p = ⌈log2(n + 1)⌉ gewählt, was der „natürlichen“ Bitbreite von n + 1 entspricht. Dann wird die unäre Codierung von q nicht mit „1“-Bits gefolgt von „0“, sondern mit „0“-Bits gefolgt von „1“ umgesetzt. Da die binär gespeicherte Zahl r immer an höchster Stelle eine „1“ aufweist, muss diese höchste „1“ nicht doppelt gespeichert werden. Die Enkodierung und Dekodierung vereinfachen sich somit zu folgenden Schritten:
+
+- Zum Kodieren von n: Schreibe p viele „0“-Bits, danach schreibe n + 1 mit der natürlichen Anzahl Bits.
+- Zum Dekodieren von n: Lese „0“-Bits bis einschließlich des ersten „1“-Bits, und lese so viele darauffolgende Bits, wie zuvor „0“-Bits gelesen wurden. Das Ergebnis ist dieser hintere Teil der kodierten Zahl minus 1.
+
+Es zeigt sich, dass eine separate Speicherung von p nicht notwendig ist, da es selbst Teil der kodierten Zahl ist.
+
+Verallgemeinerung für negative Zahlen
+
+Rice-Code und allgemeiner exponentieller Golomb-Code können zwar 0, aber keine negativen Zahlen kodieren. Dies wird durch eine der Zickzackkodierungen möglich gemacht, welche die negativen auf die positiven Zahlen abbilden, aber die Eigenschaften der Entropiekodierung erhalten; d. h. betragsmäßig kleine Zahlen werden weiterhin auf kleine Zahlen abgebildet. Konkret bildet man eine Hälfte der ganzen Zahlen auf die geraden natürlichen Zahlen ab und die andere Hälfte auf die ungeraden natürlichen Zahlen:
+
+Danach folgt normale Rice-Kodierung oder exponentielle Golomb-Kodierung. In der Praxis lassen sich sowohl De- als auch Enkodierung dieses Formats durch Benutzung von Bitmasken und Shifts beschleunigen.
+

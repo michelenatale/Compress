@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TargetFramework>net9.0</TargetFramework>
+
+    <Authors>© Michele Natale 2025</Authors>
+    <Product>© ExponentialGolombCode 2025</Product>
+    <Company>© Michele Natale 2025</Company>
+    <Description>
+      An Exponential-Golomb-Code (or simply Exp-Golomb-Code) is a kind of universal code to encode any non-negative integer x with the Exp-Golomb-Code-Algorithm.
+    </Description>
+    <Copyright>© ExponentialGolombCode 2025 created by © Michele Natale 2025.</Copyright>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="test.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
