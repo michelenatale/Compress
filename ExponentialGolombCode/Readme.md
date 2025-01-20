@@ -7,7 +7,7 @@ The EGCode is also calculated as prefix-free and unary by the algorithm created 
 This is a very simple and effective procedure that is very easy for anyone (programmers, mathematicians etc.) to understand.   
 
 ```
- public static byte[] ToEgc(ReadOnlySpan<byte> bytes)
+public static byte[] ToEgc(ReadOnlySpan<byte> bytes)
 {
   if (!EGC.Isready) EGC.StartEGC();
 
