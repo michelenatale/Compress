@@ -6,7 +6,7 @@ The Huffman code is the typical classic among compression codes, as this is an a
 https://github.com/michelenatale/Compress/tree/main/HuffmanCoding
 
 ## Exponential-Golomb-Codes
-Exponential-Golomb-Codes (also known as Exp-Golomb Coding) represent integers with bit patterns that become longer for larger numbers. One would think. The Exponential-Golomb-Code created here performs an analysis beforehand and adapts the length of the code to the frequency. 
+Exponential-Golomb-Codes (also known as Exp-Golomb-Coding) represent integers with bit patterns that become longer for larger numbers. One would think. The Exponential-Golomb-Code created here performs an analysis beforehand and adapts the length of the code to the frequency. 
 
 https://github.com/michelenatale/Compress/tree/main/ExponentialGolombCode
 
