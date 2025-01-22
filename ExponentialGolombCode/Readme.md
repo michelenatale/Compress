@@ -6,8 +6,6 @@ The EGCode is also calculated prefix-free and unary by the algorithm created her
 
 It is a very simple and effective method that is very easy for anyone (programmers, mathematicians, etc.) to understand.
 
-Translated with DeepL.com (free version) 
-
 Here is a bit of code:
 ```
 public static byte[] ToEgc(ReadOnlySpan<byte> bytes)
