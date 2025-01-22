@@ -12,7 +12,7 @@ namespace michele.natale.Compress.MinDiffScallers;
 /// </summary>
 public class MinDiffScaller
 {
-  //Is a proprietary construction, and is used to
+  //Is a own construction, and is used to
   //compress at bit level by means of conversion
   //via the number system. 
   // ==> Only for small strings
