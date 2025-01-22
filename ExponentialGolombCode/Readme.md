@@ -1,10 +1,12 @@
 # Exponential Golomb Codes 
 
-The 'ExpGolombCode' created here represents integers as bit patterns, whereby the shorter codes are adapted to the frequency of the numerical values. 
+The “ExpGolombCode” created here represents integers as bit patterns, whereby the shorter codes are adapted to the frequency of the numerical values. 
 
-The EGCode is also calculated as prefix-free and unary by the algorithm created here, and thus implemented for efficient or effective compression. 
+The EGCode is also calculated prefix-free and unary by the algorithm created here and is therefore used for efficient and effective compression. 
 
-This is a very simple and effective procedure that is very easy for anyone (programmers, mathematicians etc.) to understand.   
+It is a very simple and effective method that is very easy for anyone (programmers, mathematicians, etc.) to understand.
+
+Translated with DeepL.com (free version) 
 
 Here is a bit of code:
 ```
