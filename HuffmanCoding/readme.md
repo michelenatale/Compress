@@ -9,7 +9,7 @@ Bytes are always used. If a text is to be compressed, it must always be converte
 
 There is a [test file](https://github.com/michelenatale/Compress/blob/main/HuffmanCoding/MyHuffman/Program.cs) available that shows how to use the Huffman encoding.
 
-Here is some code for very simple compression and decompression:
+Here is a little code for a very simple compression and decompression:
 ```
 //Convert text to UTF8
 var message = "Mississippi"u8.ToArray();
