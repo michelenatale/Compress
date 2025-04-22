@@ -9,7 +9,7 @@ It is a very simple and effective method that is very easy for anyone (programme
 ## Applying the Exponential Golomb Codes:
 There is a [test file](https://github.com/michelenatale/Compress/blob/main/ExponentialGolombCode/Program.cs) that shows how to use BaseConverter.
 
-Here is some code for compress and decompress: 
+Here is a little bit of code for compressing and decompressing:: 
 ```
 public static byte[] ToEgc(ReadOnlySpan<byte> bytes)
 {
