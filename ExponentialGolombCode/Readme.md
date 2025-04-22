@@ -10,10 +10,16 @@ Here is a bit of code:
 ```
 public static byte[] ToEgc(ReadOnlySpan<byte> bytes)
 {
+  //Announcement of the EGC class
   if (!EGC.Isready) EGC.StartEGC();
 
+  //Brief analysis of the plain text.
   var score = Assessment(bytes); 
+
+  //Coding using a dictionary
   var dbytes = FromDict(score);
+
+  //The actual compression
   var gc = ExpGolomnEncode(bytes, score);
 
   ....
@@ -22,12 +28,20 @@ public static byte[] ToEgc(ReadOnlySpan<byte> bytes)
 ```
 public static byte[] FromEgc(ReadOnlySpan<byte> bytes)
 {
+  //Announcement of the EGC class
   if (!EGC.Isready) EGC.StartEGC();
 
+  //Get coding
   var fzc = bytes[1];
   var length = bytes.Length;
-  var cb = (byte)(-bytes[0]); 
+
+  //Get coding
+  var cb = (byte)(-bytes[0]);
+
+  //Decoding using a dictionary
   var score = ToDict(bytes[(length - cb)..]);
+
+  //The actual decompression
   return ExpGolomnDecode(bytes[2..(length - cb)], score, fzc);
 }
 ```
