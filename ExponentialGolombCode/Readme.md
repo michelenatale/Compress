@@ -6,7 +6,7 @@ The EGCode is also calculated prefix-free and unary by the algorithm created her
 
 It is a very simple and effective method that is very easy for anyone (programmers, mathematicians, etc.) to understand.
 
-## Applying the BaseConverter:
+## Applying the Exponential Golomb Codes:
 There is a [test file](https://github.com/michelenatale/Compress/blob/main/ExponentialGolombCode/Program.cs) that shows how to use BaseConverter.
 
 Here is some code for compress and decompress: 
