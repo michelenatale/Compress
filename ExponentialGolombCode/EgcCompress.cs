@@ -128,7 +128,10 @@ public class EgcCompress
     while (result[cnt++] == 0) ; cnt--;
 
     byte[] first = [(byte)cnt];
-    return [.. first, .. Converter([.. result], 2, 256)];
+    //return [.. first, .. Converter([.. result], 2, 256)];
+
+    //The fast Byte-Converter
+    return [.. first, .. FromBits([.. result])];
   }
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -139,13 +142,16 @@ public class EgcCompress
   {
     var gc = EGC.ExpGolombCodeR;
     var fzc = Enumerable.Repeat<byte>(0, firstzeroscount);
-    ReadOnlySpan<byte> span = fzc.Concat(Converter(bytes, 256, 2)).ToArray();
+    //ReadOnlySpan<byte> span = fzc.Concat(Converter(bytes, 256, 2)).ToArray();
+
+    //The fast Bit-Converter
+    ReadOnlySpan<byte> span = fzc.Concat(ToBits(bytes)).ToArray();
 
     var start = 0;
     var result = new List<byte>(span.Length);
     for (var i = 1; i <= span.Length; i++)
     {
-      var code = span.Slice(start, i - start);
+      var code = span[start..i];
       var num = gc(code);
       if (num >= 0)
       {
@@ -157,33 +163,87 @@ public class EgcCompress
     return [.. result];
   }
 
-  [MethodImpl(MethodImplOptions.AggressiveInlining)]
-  private static byte[] Converter(
-    ReadOnlySpan<byte> data, int startbase, int targetbase)
-  {
-    if (data.Length == 0) return new byte[1];
-    var cap = Convert.ToInt32(
-      data.Length * Math.Log(startbase) /
-        Math.Log(targetbase)) + 1;
 
-    var exit = true;
-    byte accumulator, remainder;
-    Span<byte> input = data.ToArray();
-    var result = new Stack<byte>(cap);
-    while (exit)
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  private static byte[] FromBits(ReadOnlySpan<byte> bits)
+  {
+    var cnt = (bits.Length + 7) >> 3;
+    int idx = 0, length = bits.Length;
+
+    var result = new byte[cnt];
+    for (var i = 0; i < cnt; i++)
+      result[i] =
+        (byte)((bits[idx++] & 1) |
+        ((idx < length ? bits[idx++] & 1 : 0) << 1) |
+        ((idx < length ? bits[idx++] & 1 : 0) << 2) |
+        ((idx < length ? bits[idx++] & 1 : 0) << 3) |
+        ((idx < length ? bits[idx++] & 1 : 0) << 4) |
+        ((idx < length ? bits[idx++] & 1 : 0) << 5) |
+        ((idx < length ? bits[idx++] & 1 : 0) << 6) |
+        ((idx < length ? bits[idx++] & 1 : 0) << 7));
+
+    return result;
+  }
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public static byte[] ToBits(ReadOnlySpan<byte> bytes)
+  {
+    var length = bytes.Length << 3;
+    var result = new byte[length];
+     
+    int idx = 0, cnt = bytes.Length;
+    for (int i = 0; i < cnt; i++)
     {
-      remainder = 0; exit = false;
-      for (int i = 0; i < input.Length; i++)
-      {
-        var value = startbase * remainder;
-        accumulator = (byte)((value + input[i]) % targetbase);
-        input[i] = (byte)((value + input[i]) / targetbase);
-        remainder = accumulator;
-        if (input[i] > 0) exit = true;
-      }
-      result.Push(remainder);
+      var value = bytes[i];
+      result[idx++] = (byte)(value & 0x01);
+      result[idx++] = (byte)((value >> 1) & 0x01);
+      result[idx++] = (byte)((value >> 2) & 0x01);
+      result[idx++] = (byte)((value >> 3) & 0x01);
+      result[idx++] = (byte)((value >> 4) & 0x01);
+      result[idx++] = (byte)((value >> 5) & 0x01);
+      result[idx++] = (byte)((value >> 6) & 0x01);
+      result[idx++] = (byte)((value >> 7) & 0x01);
     }
 
-    return [.. result];
+    cnt = 0;
+    while (cnt < result.Length && result[cnt] == 0)
+      cnt++;
+
+    if (cnt == 0) return result;
+    if (cnt == result.Length) return [];
+    return [.. result.Skip(cnt)];
   }
+
+
+  //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+  //private static byte[] Converter(
+  //  ReadOnlySpan<byte> data, int startbase, int targetbase)
+  //{
+  //  //Conversion for all number ranges, therefore slower.   
+  //  if (data.Length == 0) return new byte[1];
+  //  var cap = Convert.ToInt32(
+  //    data.Length * Math.Log(startbase) /
+  //      Math.Log(targetbase)) + 1;
+
+  //  var exit = true;
+  //  byte accumulator, remainder;
+  //  Span<byte> input = data.ToArray();
+  //  var result = new Stack<byte>(cap);
+  //  while (exit)
+  //  {
+  //    remainder = 0; exit = false;
+  //    for (int i = 0; i < input.Length; i++)
+  //    {
+  //      var value = startbase * remainder;
+  //      accumulator = (byte)((value + input[i]) % targetbase);
+  //      input[i] = (byte)((value + input[i]) / targetbase);
+  //      remainder = accumulator;
+  //      if (input[i] > 0) exit = true;
+  //    }
+  //    result.Push(remainder);
+  //  }
+
+  //  return [.. result];
+  //}
 }

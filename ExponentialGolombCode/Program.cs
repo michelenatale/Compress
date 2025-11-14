@@ -13,6 +13,8 @@ public class Program
 {
   public static void Main()
   {
+    //TestClass.Start();
+
     //Important.
     //Randomly created alpha texts are very difficult to compress.
     //Compression is only effective if different characters are
@@ -67,13 +69,6 @@ public class Program
 
   private static void TestLittleString()
   {
-    //Bitte beachten, das diese Kompression aus Performence-
-    //Gründen nur für Längen bis ca. 3000 Byte konzipiert ist.
-
-    //Please note that this compression is only designed for
-    //lengths up to approx. 3000 bytes for performance reasons.
-
-
     Console.WriteLine(nameof(TestLittleString));
     Console.WriteLine("****************");
 
@@ -88,6 +83,7 @@ public class Program
     Console.WriteLine($"Egc compress = {100.0 - (100.00 / plain.Length * encode.Length)}%\n");
 
     var decode = EgcCompress.FromEgc(encode);
+    if (!plain.SequenceEqual(decode)) throw new Exception();
 
     plain = "Mississippi"u8;
     plain = Mult(plain, 10);
@@ -96,6 +92,7 @@ public class Program
     Console.WriteLine($"Egc compress = {100.0 - (100.00 / plain.Length * encode.Length)}%\n");
 
     decode = EgcCompress.FromEgc(encode);
+    if (!plain.SequenceEqual(decode)) throw new Exception();
 
     plain = "Michele Natale"u8;
     plain = Mult(plain, 10);
@@ -104,28 +101,21 @@ public class Program
     Console.WriteLine($"Egc compress = {100.0 - (100.00 / plain.Length * encode.Length)}%\n");
 
     decode = EgcCompress.FromEgc(encode);
+    if (!plain.SequenceEqual(decode)) throw new Exception();
 
-
-
-    int s = 0, l = int.MaxValue;
     plain = File.ReadAllBytes("test.txt");
-    while (s + l > plain.Length)
-    {
-      s = rand.Next(0, plain.Length);
-      l = rand.Next(150, 513);
-    }
 
-    plain = plain.Slice(s, l);
+    plain = Mult(plain, rand.Next(2, 25));
     encode = EgcCompress.ToEgc(plain);
 
     Console.WriteLine("**** Text-Compress **** **** **** **** **** **** **** ");
-    Console.WriteLine($"plain = {Encoding.UTF8.GetString(plain.Slice(0, 50))} [... Only a part of the string is output ...]");
+    Console.WriteLine($"plain.Length = {plain.Length} byte");
+    Console.WriteLine($"plain = {Encoding.UTF8.GetString(plain[..50])} [... Only a part of the string is output ...]");
     Console.WriteLine($"Egc compress = {100.0 - (100.00 / plain.Length * encode.Length)}%");
     Console.WriteLine("**** Text-Compress **** **** **** **** **** **** **** \n");
 
     decode = EgcCompress.FromEgc(encode);
-
-
+    if (!plain.SequenceEqual(decode)) throw new Exception();
 
     var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 "u8;
 
@@ -134,8 +124,9 @@ public class Program
     //Compression is only effective if different characters are
     //present several times in a text.
 
+
     var length = rand.Next(150, 257);
-    //var length = rand.Next(1000, 3073);
+    //var length = rand.Next(1000, 1 << 12);
     plain = rand.GetItems(alpha, length);
 
     encode = EgcCompress.ToEgc(plain);
@@ -146,6 +137,7 @@ public class Program
     Console.WriteLine("**** Randomly **** **** **** **** **** **** **** \n");
 
     decode = EgcCompress.FromEgc(encode);
+    if (!plain.SequenceEqual(decode)) throw new Exception();
 
     Console.WriteLine();
   }
@@ -159,23 +151,5 @@ public class Program
     for (int i = 0; i < mult; i++)
       Array.Copy(input, 0, result, i * length, length);
     return result;
-  }
-
-
-  private static byte[] RngBytes(int size)
-  {
-    var rand = Random.Shared;
-    var bytes = new byte[size];
-    rand.NextBytes(bytes);
-    return bytes;
-  }
-
-  private static byte[] RngBytes(int size, byte min, byte max)
-  {
-    var rand = Random.Shared;
-    var bytes = new byte[size];
-    for (int i = 0; i < size; i++)
-      bytes[i] = (byte)rand.Next(min, max);
-    return bytes;
   }
 }
