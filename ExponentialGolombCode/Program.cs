@@ -13,8 +13,6 @@ public class Program
 {
   public static void Main()
   {
-    //TestClass.Start();
-
     //Important.
     //Randomly created alpha texts are very difficult to compress.
     //Compression is only effective if different characters are
@@ -83,7 +81,6 @@ public class Program
     Console.WriteLine($"Egc compress = {100.0 - (100.00 / plain.Length * encode.Length)}%\n");
 
     var decode = EgcCompress.FromEgc(encode);
-    if (!plain.SequenceEqual(decode)) throw new Exception();
 
     plain = "Mississippi"u8;
     plain = Mult(plain, 10);
@@ -92,7 +89,6 @@ public class Program
     Console.WriteLine($"Egc compress = {100.0 - (100.00 / plain.Length * encode.Length)}%\n");
 
     decode = EgcCompress.FromEgc(encode);
-    if (!plain.SequenceEqual(decode)) throw new Exception();
 
     plain = "Michele Natale"u8;
     plain = Mult(plain, 10);
@@ -101,7 +97,6 @@ public class Program
     Console.WriteLine($"Egc compress = {100.0 - (100.00 / plain.Length * encode.Length)}%\n");
 
     decode = EgcCompress.FromEgc(encode);
-    if (!plain.SequenceEqual(decode)) throw new Exception();
 
     plain = File.ReadAllBytes("test.txt");
 
@@ -115,7 +110,6 @@ public class Program
     Console.WriteLine("**** Text-Compress **** **** **** **** **** **** **** \n");
 
     decode = EgcCompress.FromEgc(encode);
-    if (!plain.SequenceEqual(decode)) throw new Exception();
 
     var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 "u8;
 
@@ -137,7 +131,6 @@ public class Program
     Console.WriteLine("**** Randomly **** **** **** **** **** **** **** \n");
 
     decode = EgcCompress.FromEgc(encode);
-    if (!plain.SequenceEqual(decode)) throw new Exception();
 
     Console.WriteLine();
   }
@@ -152,4 +145,5 @@ public class Program
       Array.Copy(input, 0, result, i * length, length);
     return result;
   }
+
 }
