@@ -2,7 +2,7 @@
 using System.IO.Compression;
 
 
-namespace BrotliLib;
+namespace michele.natale.Compressors;
 
 
 //Synchron: Span<T> / ReadOnlySpan<T> → maximale Performance, keine Allokationen.

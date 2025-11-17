@@ -1,12 +1,12 @@
 ﻿
 
-using BrotliLib;
+
 using System.Text;
-using BrotliLib.Services;
 
+namespace michele.natale.Tests;
 
-namespace MyTestBrotli;
-
+using Services;
+using Compressors;
 
 public class CompressedNetTest
 {

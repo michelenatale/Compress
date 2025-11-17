@@ -2,7 +2,7 @@
 
 using System.Security.Cryptography;
 
-namespace BrotliLib.Services;
+namespace michele.natale.Services;
 
 public partial class ServicesCompress
 {

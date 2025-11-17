@@ -1,8 +1,7 @@
 ﻿
 
 
-namespace MyTestBrotli;
-
+namespace michele.natale.Tests; 
 
 public class Program
 {
@@ -11,6 +10,10 @@ public class Program
 
     CompressedNetTest.Start();
 
+
+    Console.WriteLine();
+    Console.WriteLine("Finish");
+    Console.ReadLine();
   }
 }
 
