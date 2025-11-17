@@ -3,6 +3,8 @@
 
 Incidentally, both methods are based on LZ77 and Huffman coding. LZ77 was developed in 1977 by Abraham Lempel and Jacob Ziv. It is based on the dictionary principle, which has always proven to be extremely effective in compression. Compression rates of up to 90% can be achieved in some cases.
 
+## Console Output
 
-[](https://github.com/michelenatale/Compress/blob/main/TestBrotliDotNet/Documentation/ConsolOutput.png)
+And this is what the console output looks like:
+![](https://github.com/michelenatale/Compress/blob/main/TestBrotliDotNet/Documentation/ConsolOutput.png)
 
