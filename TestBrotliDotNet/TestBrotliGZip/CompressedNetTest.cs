@@ -1,13 +1,12 @@
 ﻿
 
 
-using System.Text;
+using System.Text; 
 
 namespace michele.natale.Tests;
 
-using Compressors;
 using Services;
-using System.Threading.Tasks;
+using Compressors;
 
 public class CompressedNetTest
 {
