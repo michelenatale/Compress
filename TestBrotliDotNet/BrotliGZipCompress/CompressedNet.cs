@@ -54,7 +54,6 @@ namespace michele.natale.Compressors;
 public class CompressedNet
 {
 
-
   /// <summary>
   /// The minimum Brotli window size (logarithmic, base 2).
   /// </summary>
@@ -409,9 +408,9 @@ public class CompressedNet
   public async static Task<byte[]> DecompressGZipAsync(
    byte[] bytes, CancellationToken ct)
   {
-    using var msout = new MemoryStream();
-    using var ms = new MemoryStream(bytes);
-    using (var gzip = new GZipStream(ms, CompressionMode.Decompress))
+    await using var msout = new MemoryStream();
+    await using var ms = new MemoryStream(bytes);
+    await using (var gzip = new GZipStream(ms, CompressionMode.Decompress))
       await gzip.CopyToAsync(msout, ct).ConfigureAwait(false);
 
     return msout.ToArray();
@@ -790,7 +789,7 @@ public class CompressedNet
     int readbytes;
     var buffer = new byte[buffersize];
 
-    using var gzip = new GZipStream(input, CompressionMode.Decompress);
+    await using var gzip = new GZipStream(input, CompressionMode.Decompress);
     while ((readbytes = await gzip.ReadAsync(
       buffer.AsMemory(0, buffer.Length)).ConfigureAwait(false)) > 0)
       await output.WriteAsync(buffer.AsMemory(0, readbytes)).ConfigureAwait(false);
@@ -841,7 +840,7 @@ public class CompressedNet
     int readbytes;
     var buffer = new byte[buffersize];
 
-    using var gzip = new GZipStream(input, CompressionMode.Decompress);
+    await using var gzip = new GZipStream(input, CompressionMode.Decompress);
     while ((readbytes = await gzip.ReadAsync(
       buffer.AsMemory(0, buffer.Length), ct).ConfigureAwait(false)) > 0)
       await output.WriteAsync(buffer.AsMemory(0, readbytes), ct).ConfigureAwait(false);
@@ -1430,9 +1429,9 @@ public class CompressedNet
   public async static Task<byte[]> DecompressBrotliAsync(
    byte[] bytes, CancellationToken ct)
   {
-    using var msout = new MemoryStream();
-    using var ms = new MemoryStream(bytes);
-    using (var Brotli = new BrotliStream(ms, CompressionMode.Decompress))
+    await using var msout = new MemoryStream();
+    await using var ms = new MemoryStream(bytes);
+    await using (var Brotli = new BrotliStream(ms, CompressionMode.Decompress))
       await Brotli.CopyToAsync(msout, ct).ConfigureAwait(false);
 
     return msout.ToArray();
@@ -1827,7 +1826,7 @@ public class CompressedNet
     int readbytes;
     var buffer = new byte[buffersize];
 
-    using var Brotli = new BrotliStream(input, CompressionMode.Decompress);
+    await using var Brotli = new BrotliStream(input, CompressionMode.Decompress);
     while ((readbytes = await Brotli.ReadAsync(
       buffer.AsMemory(0, buffer.Length)).ConfigureAwait(false)) > 0)
       await output.WriteAsync(buffer.AsMemory(0, readbytes)).ConfigureAwait(false);
@@ -1858,7 +1857,7 @@ public class CompressedNet
     int readbytes;
     var buffer = new byte[buffersize];
 
-    using var Brotli = new BrotliStream(input, CompressionMode.Decompress);
+    await using var Brotli = new BrotliStream(input, CompressionMode.Decompress);
     while ((readbytes = await Brotli.ReadAsync(
       buffer.AsMemory(0, buffer.Length), ct).ConfigureAwait(false)) > 0)
       await output.WriteAsync(buffer.AsMemory(0, readbytes), ct).ConfigureAwait(false);
