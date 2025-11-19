@@ -6,5 +6,6 @@ Incidentally, both methods are based on LZ77 and Huffman coding. LZ77 was develo
 ## Console Output
 
 And this is what the console output looks like:
+
 ![](https://github.com/michelenatale/Compress/blob/main/TestBrotliDotNet/Documentation/ConsolOutput.png)
 
