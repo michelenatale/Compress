@@ -101,7 +101,7 @@ public class CompressedNet
 
   #region GZip
 
-  #region Bytes
+  #region GZip Bytes
 
   #region GZip Compress
 
@@ -419,9 +419,9 @@ public class CompressedNet
 
   #endregion Async GZip Compress
 
-  #endregion Bytes
+  #endregion GZip Bytes
 
-  #region FileStream
+  #region GZip FileStream
 
   #region FileStream Compress
 
@@ -618,7 +618,6 @@ public class CompressedNet
   }
 
   #endregion FileStream Compress
-
 
   #region Async FileStream Compress
 
@@ -851,13 +850,13 @@ public class CompressedNet
 
   #endregion Async FileStream Compress
 
-  #endregion FileStream
+  #endregion GZip FileStream
 
   #endregion GZip
 
   #region Brotli
 
-  #region Bytes
+  #region Brotli Bytes
 
   #region Brotli Compress
 
@@ -1441,9 +1440,9 @@ public class CompressedNet
 
   #endregion Async Brotli Compress
 
-  #endregion Bytes
+  #endregion Brotli Bytes
 
-  #region FileStream
+  #region Brotli FileStream
 
   #region FileStream Compress
 
@@ -1660,7 +1659,6 @@ public class CompressedNet
 
   #endregion FileStream Compress
 
-
   #region Async FileStream Compress
 
   /// <summary>
@@ -1869,7 +1867,7 @@ public class CompressedNet
 
   #endregion Async FileStream Compress
 
-  #endregion FileStream
+  #endregion Brotli FileStream
 
   #endregion Brotli
 
