@@ -6,7 +6,7 @@ Incidentally, both methods are based on [LZ77](https://en.wikipedia.org/wiki/LZ7
 ## Applying the Brotli GZip Library:
 There is a [test file C#](https://github.com/michelenatale/Compress/blob/main/TestBrotliDotNet/TestBrotliGZip/CompressedNetTest.cs) and a [test file vb.net](https://github.com/michelenatale/Compress/blob/main/TestBrotliDotNet/TestBrotliGZipVB/CompressedNetTest.vb) that shows how to use the brotli gzip library Codes.
 
-Here is a small piece of code for compressing and decompressing. Of course, all methods are documented to explain why it is done this way: 
+Here is a little code for compressing and decompressing. Of course, all methods are documented to explain why it is done this way: 
 ```
 public static bool TryCompressBrotli(
   ReadOnlySpan<byte> bytes, CancellationToken ct,
