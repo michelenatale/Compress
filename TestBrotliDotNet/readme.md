@@ -6,7 +6,7 @@ Incidentally, both methods are based on LZ77 and Huffman coding. LZ77 was develo
 ## Applying the Exponential Golomb Codes:
 There is a [test file C#](https://github.com/michelenatale/Compress/blob/main/TestBrotliDotNet/TestBrotliGZip/CompressedNetTest.cs) and a [test file vb.net](https://github.com/michelenatale/Compress/blob/main/TestBrotliDotNet/TestBrotliGZipVB/CompressedNetTest.vb) that shows how to use Exponential Golomb Codes.
 
-Here is a little bit of code for compressing and decompressing: 
+Here is a small piece of code for compressing and decompressing. Of course, all methods are documented to explain why it is done this way: 
 ```
 public static bool TryCompressBrotli(
   ReadOnlySpan<byte> bytes, CancellationToken ct,
