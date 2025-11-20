@@ -2,8 +2,17 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <RootNamespace>TestBrotliGZipVB</RootNamespace>
     <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>TestBrotliGZipVB</RootNamespace>
+
+
+    <Authors>© Michele Natale 2025</Authors>
+    <Product>© BrotliGZipCompress 2025</Product>
+    <Company>© Michele Natale 2025</Company>
+    <Description>
+      © BrotliGZipCompress 2025 written in C# - Best Practice for Brotli/GZip Compress.
+    </Description>
+    <Copyright>© BrotliGZipCompress 2025 created by © Michele Natale 2025.</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
