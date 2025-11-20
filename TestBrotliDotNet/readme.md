@@ -3,7 +3,7 @@
 
 Incidentally, both methods are based on LZ77 and Huffman coding. LZ77 was developed in 1977 by Abraham Lempel and Jacob Ziv. It is based on the dictionary principle, which has always proven to be extremely effective in compression. Compression rates of up to 90% can be achieved in some cases.
 
-## Applying the Exponential Golomb Codes:
+## Applying the Brotli GZip library:
 There is a [test file C#](https://github.com/michelenatale/Compress/blob/main/TestBrotliDotNet/TestBrotliGZip/CompressedNetTest.cs) and a [test file vb.net](https://github.com/michelenatale/Compress/blob/main/TestBrotliDotNet/TestBrotliGZipVB/CompressedNetTest.vb) that shows how to use Exponential Golomb Codes.
 
 Here is a small piece of code for compressing and decompressing. Of course, all methods are documented to explain why it is done this way: 
