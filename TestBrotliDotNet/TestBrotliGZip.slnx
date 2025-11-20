@@ -9,4 +9,5 @@
   <Project Path="TestBrotliGZip/TestBrotliGZip.csproj">
     <Platform Solution="*|x64" Project="x64" />
   </Project>
+  <Project Path="TestBrotliGZipVB/TestBrotliGZipVB.vbproj" Id="f4839292-a872-44c8-bc8c-4602a9276f39" />
 </Solution>
