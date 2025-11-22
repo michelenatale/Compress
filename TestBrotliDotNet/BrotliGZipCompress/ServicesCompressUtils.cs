@@ -1,5 +1,4 @@
 ﻿
-
 using System.Security.Cryptography;
 
 namespace michele.natale.Services;
@@ -72,6 +71,41 @@ public partial class ServicesCompress
   }
 
   /// <summary>
+  /// Asynchronously compares two files by computing their SHA-512 hashes.
+  /// </summary>
+  /// <param name="left">
+  /// The path of the first file to compare.
+  /// </param>
+  /// <param name="right">
+  /// The path of the second file to compare.
+  /// </param>
+  /// <returns>
+  /// A <see cref="Task{Boolean}"/> representing the asynchronous operation,
+  /// with <c>true</c> if both files exist and have identical SHA-512 hashes,
+  /// otherwise <c>false</c>.
+  /// </returns>
+  /// <remarks>
+  /// - Returns <c>false</c> if either file does not exist.
+  /// - Uses <see cref="FileStream"/> with <c>useAsync: true</c> for async I/O.
+  /// - Hashes are computed asynchronously via <see cref="HashAlgorithm.ComputeHashAsync(Stream, CancellationToken)"/>.
+  /// - <see cref="ConfigureAwait(bool)"/> is used with <c>false</c> to avoid deadlocks in synchronization contexts.
+  /// </remarks>
+  public static async Task<bool> FileEqualsAsync(string left, string right)
+  {
+    if (!File.Exists(left)) return false;
+    if (!File.Exists(right)) return false;
+
+    await using var fsleft = new FileStream(left, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true);
+    await using var fsright = new FileStream(right, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true);
+
+    using var sha = SHA512.Create();
+    var hashLeft = await sha.ComputeHashAsync(fsleft).ConfigureAwait(false);
+    var hashRight = await sha.ComputeHashAsync(fsright).ConfigureAwait(false);
+
+    return hashLeft.SequenceEqual(hashRight);
+  }
+
+  /// <summary>
   /// Gets the size of a file in bytes as a 32-bit integer.
   /// </summary>
   /// <param name="src">The path to the file.</param>
@@ -114,4 +148,78 @@ public partial class ServicesCompress
     return fs.Length;
   }
 
+  /// <summary>
+  /// Asynchronously retrieves the size of a file in bytes.
+  /// </summary>
+  /// <param name="src">
+  /// The path of the file whose size is requested.
+  /// </param>
+  /// <returns>
+  /// A <see cref="Task{Int64}"/> representing the asynchronous operation,
+  /// with the file size in bytes as result, or -1 if the file does not exist.
+  /// </returns>
+  /// <remarks>
+  /// - The method checks existence with <see cref="File.Exists"/>.
+  /// - The file is opened with <see cref="FileMode.Open"/> and <see cref="FileAccess.Read"/>.
+  /// - The <see cref="FileStream.Length"/> property is accessed synchronously,
+  /// but wrapped in <see cref="Task"/> for async API consistency.
+  /// </remarks>
+  public static async Task<long> FileSizeLongAsync(string src)
+  {
+    if (!File.Exists(src)) return -1;
+    await using var fs = new FileStream(src, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 1, useAsync: true);
+    return await Task.FromResult(fs.Length).ConfigureAwait(false);
+  }
+
+  /// <summary>
+  /// Asynchronously writes the specified byte array multiple times into a new file.
+  /// </summary>
+  /// <param name="filename">
+  /// The name of the file to be created and written to.
+  /// </param>
+  /// <param name="bytes">
+  /// The byte array whose contents will be written.
+  /// </param>
+  /// <param name="mult">
+  /// The number of times the byte array will be written to the file.
+  /// </param>
+  /// <returns>
+  /// A <see cref="Task"/> representing the asynchronous write operation.
+  /// </returns>
+  /// <remarks>
+  /// - The file is created using <see cref="FileMode.Create"/>.
+  /// - The entire contents of <paramref name="bytes"/> are written <paramref name="mult"/> times.
+  /// - The method uses <see cref="MemoryExtensions.AsMemory"/> for efficient writing.
+  /// - <see cref="ConfigureAwait(bool)"/> is called with <c>false</c> to avoid deadlocks in synchronization contexts.
+  /// </remarks>
+  public async static Task MultBytesInFileAsync(
+    string filename, byte[] bytes, int mult)
+  {
+    using var fsout = new FileStream(
+      filename, FileMode.Create, FileAccess.Write);
+
+    var length = bytes.Length;
+    for (var i = 0; i < mult; i++)
+      await fsout.WriteAsync(bytes.AsMemory(0, length))
+        .ConfigureAwait(false);
+  }
+
+
+  //public async static Task RngByteFileAsync(
+  //  string filename, int size, int buffersize = 1 << 20)
+  //{
+  //  using var fsout = new FileStream(filename, FileMode.Create, FileAccess.Write);
+
+  //  int sumbytes = size;
+  //  var rand = Random.Shared;
+  //  var buffer = new byte[buffersize];
+
+  //  while (sumbytes > 0)
+  //  {
+  //    rand.NextBytes(buffer);
+  //    var sz = sumbytes - buffersize >= 0 ? buffersize : sumbytes;
+  //    await fsout.WriteAsync(buffer.AsMemory(0, sz)).ConfigureAwait(false);
+  //    sumbytes -= sz;
+  //  }
+  //}
 }
