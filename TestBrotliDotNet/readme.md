@@ -16,27 +16,39 @@ public static bool TryCompressBrotli(
   AssertCompress(bytes, quality, window);
 
   var cnt = 1;
+  byte[] buffer = [];
+  var pool = ArrayPool<byte>.Shared;
 
-  while (true)
+  try
   {
-    writtenbytes = -1;
-    ct.ThrowIfCancellationRequested();
-    var maxlength = BrotliEncoder.GetMaxCompressedLength(cnt++ * bytes.Length);
-    compressed = new byte[maxlength];
-
-    if (BrotliEncoder.TryCompress(
-      bytes, compressed, out writtenbytes,
-      quality, window))
+    while (true)
     {
+      compressed = [];
+      writtenbytes = -1;
       ct.ThrowIfCancellationRequested();
-      Array.Resize(ref compressed, writtenbytes);
-      return true;
+
+      var maxlength = BrotliEncoder.GetMaxCompressedLength(cnt++ * bytes.Length);
+      buffer = pool.Rent(maxlength);
+
+      var span = buffer.AsSpan(0, maxlength);
+      if (BrotliEncoder.TryCompress(
+        bytes, span, out writtenbytes,
+        quality, window))
+      {
+        ct.ThrowIfCancellationRequested();
+        compressed = new byte[writtenbytes];
+        Buffer.BlockCopy(buffer, 0, compressed, 0, writtenbytes);
+        return true;
+      }
+
+      if (cnt > 3) break;
     }
-
-    if (cnt > 3) break;
+    return false;
   }
-
-  throw new InvalidOperationException("Compression failed.");
+  finally
+  {
+    pool.Return(buffer);
+  }
 }
 ```
 ```
@@ -48,24 +60,34 @@ public static bool TryDecompressBrotli(
   decompressed = [];
   writtenbytes = -1;
   var result = false;
+  var pool = ArrayPool<byte>.Shared;
+
   while (!result)
   {
     writtenbytes = -1;
     ct.ThrowIfCancellationRequested();
-    decompressed = new byte[(1 << cnt++) * bytes.Length];
+    var size = (1 << cnt++) * bytes.Length;
 
-    if (decompressed.Length > MAX_BYTES_LENGTH)
+    if (size > MAX_BYTES_LENGTH)
       throw new ArgumentOutOfRangeException(nameof(decompressed),
           $"{nameof(decompressed)}.Length has failed!");
 
-    result = BrotliDecoder.TryDecompress(
-      bytes, decompressed, out writtenbytes);
-
-    if (!result) continue;
-    Array.Resize(ref decompressed, writtenbytes);
+    var buffer = pool.Rent(size);
+    try
+    {
+      if (BrotliDecoder.TryDecompress(
+        bytes, buffer, out writtenbytes))
+      {
+        decompressed = buffer.AsSpan(0, writtenbytes).ToArray();
+        return true;
+      }
+    }
+    finally
+    {
+      pool.Return(buffer);
+    }
   }
-
-  return result;
+  return false;
 }
 ```
 
