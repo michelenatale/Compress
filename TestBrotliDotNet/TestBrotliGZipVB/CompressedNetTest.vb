@@ -4,7 +4,7 @@ Imports System.IO
 Imports System.Text
 Imports System.Threading
 Imports michele.natale.Services
-Imports michele.natale.Compressors
+Imports michele.natale.Compresses
 
 
 Namespace michele.natale.Tests

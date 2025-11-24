@@ -1,19 +1,21 @@
 ﻿
 
+ 
 
 namespace michele.natale.Tests;
 
 
 public class Program
 {
-    public async static Task Main()
-    {
+  public async static Task Main()
+  {
 
-        await CompressedNetTest.Start();
+    await CompressedNetTest.Start();
+    await FileCompressPackageTest.Start();
 
 
-        Console.WriteLine();
-        Console.WriteLine("Finish");
-        Console.ReadLine();
-    }
+    Console.WriteLine();
+    Console.WriteLine("Finish");
+    Console.ReadLine();
+  }
 }
