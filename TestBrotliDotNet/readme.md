@@ -146,7 +146,7 @@ I think **ConfigurationFiles** are a way to remove certain elements from the cod
 
 **Versioning** could also be implemented, especially in the FileInfosHeader class, for example, which would certainly be a good decision for future extensions. However, I am refraining from doing so because I do not see any urgent need for it, and the project is also licensed. So if anyone wants to take advantage of this, the option is there, which is also good.
 
-I consider more intensive **UnitTests** to be important, and I will do them at a later date. Especially with streams, it always makes sense to do special and customized unit tests. However, the methods are designed in such a way that virtually all situations that can arise are avoided or caught by exception.
+I consider more intensive **UnitTests and Benchmark** to be important, and I will do them at a later date. Especially with streams, it always makes sense to do special and customized UnitTests and Benchmark. However, the methods are designed in such a way that virtually all situations that can arise are avoided or caught by exception.
 
 And that brings us to the last point that still needs to be addressed, namely a **Logger**. I may do that at a later date as well. In principle, the setup is so quick that it doesn't take much time. Anyone who wants to can do this in advance for themselves.
 
