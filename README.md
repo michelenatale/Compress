@@ -16,4 +16,6 @@ https://github.com/michelenatale/Compress/tree/main/ExponentialGolombCode
 
 Incidentally, both methods are based on [LZ77](https://en.wikipedia.org/wiki/LZ77_and_LZ78#LZ77) and [Huffman Coding](https://en.wikipedia.org/wiki/Huffman_coding). LZ77 was developed in 1977 by [Abraham Lempel](https://en.wikipedia.org/wiki/Abraham_Lempel) and [Jacob Ziv](https://en.wikipedia.org/wiki/Jacob_Ziv). It is based on the [dictionary principle](https://en.wikipedia.org/wiki/Dictionary_coder), which has always proven to be extremely effective in compression. Compression rates of up to 90% can be achieved in some cases.
 
+I subsequently added a very slim, simple, and fast archiving program (similar to TAR, ZIP, GZ) called “FileCompressPackage,” but with minimal functionality.
+
 https://github.com/michelenatale/Compress/tree/main/TestBrotliDotNet
