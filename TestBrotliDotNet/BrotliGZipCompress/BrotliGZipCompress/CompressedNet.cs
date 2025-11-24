@@ -6,6 +6,8 @@
 
 
 
+using System;
+using System.Buffers;
 using System.IO.Compression;
 
 namespace michele.natale.Compresses;
@@ -1107,26 +1109,39 @@ public class CompressedNet
     AssertCompress(bytes, quality, window);
 
     var cnt = 1;
+    byte[] buffer = [];
+    var pool = ArrayPool<byte>.Shared;
 
-    while (true)
+    try
     {
-      writtenbytes = -1;
-      var maxlength = BrotliEncoder.GetMaxCompressedLength(cnt++ * bytes.Length);
-      compressed = new byte[maxlength];
-
-      if (BrotliEncoder.TryCompress(
-        bytes, compressed, out writtenbytes,
-        quality, window))
+      while (true)
       {
-        Array.Resize(ref compressed, writtenbytes);
-        return true;
+        compressed = [];
+        writtenbytes = -1; 
+
+        var maxlength = BrotliEncoder.GetMaxCompressedLength(cnt++ * bytes.Length);
+        buffer = pool.Rent(maxlength);
+
+        var span = buffer.AsSpan(0, maxlength);
+        if (BrotliEncoder.TryCompress(
+          bytes, span, out writtenbytes,
+          quality, window))
+        { 
+          compressed = new byte[writtenbytes];
+          Buffer.BlockCopy(buffer, 0, compressed, 0, writtenbytes);
+          return true;
+        }
+
+        if (cnt > 3) break;
       }
-
-      if (cnt > 3) break;
+      return false;
     }
-
-    throw new InvalidOperationException("Compression failed.");
+    finally
+    {
+      pool.Return(buffer);
+    }
   }
+
 
   /// <summary>
   /// Attempts to compress the given input using Brotli with the specified quality and window size, supporting cancellation.
@@ -1180,27 +1195,39 @@ public class CompressedNet
     AssertCompress(bytes, quality, window);
 
     var cnt = 1;
+    byte[] buffer = [];
+    var pool = ArrayPool<byte>.Shared;
 
-    while (true)
+    try
     {
-      writtenbytes = -1;
-      ct.ThrowIfCancellationRequested();
-      var maxlength = BrotliEncoder.GetMaxCompressedLength(cnt++ * bytes.Length);
-      compressed = new byte[maxlength];
-
-      if (BrotliEncoder.TryCompress(
-        bytes, compressed, out writtenbytes,
-        quality, window))
+      while (true)
       {
+        compressed = [];
+        writtenbytes = -1;
         ct.ThrowIfCancellationRequested();
-        Array.Resize(ref compressed, writtenbytes);
-        return true;
+
+        var maxlength = BrotliEncoder.GetMaxCompressedLength(cnt++ * bytes.Length);
+        buffer = pool.Rent(maxlength);
+
+        var span = buffer.AsSpan(0, maxlength);
+        if (BrotliEncoder.TryCompress(
+          bytes, span, out writtenbytes,
+          quality, window))
+        {
+          ct.ThrowIfCancellationRequested();
+          compressed = new byte[writtenbytes];
+          Buffer.BlockCopy(buffer, 0, compressed, 0, writtenbytes);
+          return true;
+        }
+
+        if (cnt > 3) break;
       }
-
-      if (cnt > 3) break;
+      return false;
     }
-
-    throw new InvalidOperationException("Compression failed.");
+    finally
+    {
+      pool.Return(buffer);
+    }
   }
 
   /// <summary>
