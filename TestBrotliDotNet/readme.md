@@ -126,7 +126,7 @@ I think **ConfigurationFiles** are a way to remove certain elements from the cod
 
 I consider more intensive **UnitTests** to be important, and I will do them at a later date. Especially with streams, it always makes sense to do special and customized unit tests. However, the methods are designed in such a way that virtually all situations that can arise are avoided or caught by exception.
 
-And that brings us to the last point that still needs to be addressed, namely a **logger**. I may do that at a later date as well. In principle, the setup is so quick that it doesn't take much time. Anyone who wants to can do this in advance for themselves.
+And that brings us to the last point that still needs to be addressed, namely a **Logger**. I may do that at a later date as well. In principle, the setup is so quick that it doesn't take much time. Anyone who wants to can do this in advance for themselves.
 
 ## Console Output
 
