@@ -69,6 +69,53 @@ public static bool TryDecompressBrotli(
 }
 ```
 
+## Bonus
+
+Afterwards, I added a very slim, simple, and fast archiver (similar to TAR, ZIP, GZ) called “FileCompressPackage.” 
+
+FileCompressPackage simply takes the desired files (filepath) and compresses (PACK) them all together into a single stream or file. All files can be extracted again with UNPACK into a folder of your choice.
+```
+public async static Task PackAsync(
+    string[] filepathlist, string archivepath, CompressionType compressiontype,
+    int buffersize = 81920, CompressionLevel compresslevel = CompressionLevel.Optimal) =>
+      await PackAsync(filepathlist, archivepath, (byte)compressiontype, buffersize, compresslevel);
+
+public async static Task PackAsync(
+    string[] filepathlist, string archivepath, byte compressiontype,
+    int buffersize = 81920, CompressionLevel compresslevel = CompressionLevel.Optimal)
+  {
+      var archiv = await ServicesCompress.CheckFCPFileExtensionAsync(archivepath);
+      await using var fsout = new FileStream(archiv.FullName, FileMode.Create, FileAccess.Write);
+
+      foreach (var src in filepathlist)
+      {
+          await using var fsin = new FileStream(src, FileMode.Open, FileAccess.Read);
+          await WriteFileAsync(fsin, fsout, src, compressiontype, buffersize, compresslevel);
+      }
+
+      Console.WriteLine();
+  }
+```
+```
+public async static Task UnPackAsync(string archivepath, string outputfolder)
+{
+  ServicesCompress.DeleteFolder(outputfolder, true);
+  Directory.CreateDirectory(outputfolder);
+  await using var fsin = new FileStream(archivepath, FileMode.Open, FileAccess.Read);
+  await ReadFilesAsync(fsin, outputfolder);
+}
+```
+
+## Strengths
+
+**Clear structure:** Separation between compression logic (Brotli/GZip) and test projects is clean and comprehensible.
+
+**Robust implementation:** Methods such as TryCompressBrotli and TryDecompressBrotli use CancellationToken, error handling, and dynamic buffer sizes. Ultimately, however, it can be said that each individual method has been carefully thought out with the aim of stability and performance.
+
+**Cross-language examples:** C# and VB.NET tests are included to make the project more accessible to other DotNet developers.
+
+**Audit-friendly:** When designing this project, I focused on transparency and effectiveness. All methods have been developed with the aim of being very lean but still DotNet-compliant. This is also the case with FileCompressPackage, which is simple but still does exactly what an archive format requires. 
+
 ## Console Output
 
 And this is what the console output looks like:
