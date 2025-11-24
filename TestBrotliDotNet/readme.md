@@ -116,6 +116,18 @@ public async static Task UnPackAsync(string archivepath, string outputfolder)
 
 **Audit-friendly:** When designing this project, I focused on transparency and effectiveness. All methods have been developed with the aim of being very lean but still DotNet-compliant. This is also the case with FileCompressPackage, which is simple but still does exactly what an archive format requires. 
 
+## What else could be done?  
+
+You could use **XUnit/NUnit**. I deliberately refrain from doing so, as I don't like to integrate Nuget unless it's absolutely necessary.  
+
+I think **ConfigurationFiles** are a way to remove certain elements from the code. Personally, I'm not a big fan of this, because I believe that important declarations need to be immediately apparent, preferably right in the code.  
+
+**Versioning** could also be implemented, especially in the FileInfosHeader class, for example, which would certainly be a good decision for future extensions. However, I am refraining from doing so because I do not see any urgent need for it, and the project is also licensed. So if anyone wants to take advantage of this, the option is there, which is also good.
+
+I consider more intensive **UnitTests** to be important, and I will do them at a later date. Especially with streams, it always makes sense to do special and customized unit tests. However, the methods are designed in such a way that virtually all situations that can arise are avoided or caught by exception.
+
+And that brings us to the last point that still needs to be addressed, namely a **logger**. I may do that at a later date as well. In principle, the setup is so quick that it doesn't take much time. Anyone who wants to can do this in advance for themselves.
+
 ## Console Output
 
 And this is what the console output looks like:
