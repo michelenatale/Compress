@@ -1011,6 +1011,7 @@ public class CompressedNet
     using var ms = new MemoryStream();
     using (var Brotli = new BrotliStream(ms, compresslevel))
       Brotli.Write(bytes);
+
     return ms.ToArray();
   }
 
@@ -1118,13 +1119,11 @@ public class CompressedNet
       var buffer = pool.Rent(maxlength);
       try
       {
-        var span = buffer.AsSpan(0, maxlength);
         if (BrotliEncoder.TryCompress(
-          bytes, span, out writtenbytes,
+          bytes, buffer, out writtenbytes,
           quality, window))
-        { 
-          compressed = new byte[writtenbytes];
-          Buffer.BlockCopy(buffer, 0, compressed, 0, writtenbytes);
+        {
+          compressed = buffer.AsSpan(0,writtenbytes).ToArray();
           return true;
         }
       }
@@ -1203,14 +1202,12 @@ public class CompressedNet
       var buffer = pool.Rent(maxlength);
       try
       {
-        var span = buffer.AsSpan(0, maxlength);
         if (BrotliEncoder.TryCompress(
-          bytes, span, out writtenbytes,
+          bytes, buffer, out writtenbytes,
           quality, window))
         {
           ct.ThrowIfCancellationRequested();
-          compressed = new byte[writtenbytes];
-          Buffer.BlockCopy(buffer, 0, compressed, 0, writtenbytes);
+          compressed = buffer.AsSpan(0, writtenbytes).ToArray();
           return true;
         }
       }
@@ -1428,6 +1425,7 @@ public class CompressedNet
         if (BrotliDecoder.TryDecompress(
           bytes, buffer, out writtenbytes))
         {
+          ct.ThrowIfCancellationRequested();
           decompressed = buffer.AsSpan(0, writtenbytes).ToArray();
           return true;
         }
@@ -1441,69 +1439,69 @@ public class CompressedNet
     return false;
   }
 
-  public static bool TryDecompressBrotli2(
-    ReadOnlySpan<byte> bytes, CancellationToken ct,
-    out byte[] decompressed, out int writtenbytes)
-  {
-    const int MAX_BYTES_LENGTH = 8 * 1024 * 1024; // 8 MB, wie bei dir
-    if (bytes.Length == 0)
-    {
-      decompressed = Array.Empty<byte>();
-      writtenbytes = 0;
-      return true;
-    }
+  //public static bool TryDecompressBrotli2(
+  //  ReadOnlySpan<byte> bytes, CancellationToken ct,
+  //  out byte[] decompressed, out int writtenbytes)
+  //{
+  //  const int MAX_BYTES_LENGTH = 8 * 1024 * 1024; // 8 MB, wie bei dir
+  //  if (bytes.Length == 0)
+  //  {
+  //    decompressed = Array.Empty<byte>();
+  //    writtenbytes = 0;
+  //    return true;
+  //  }
 
-    // Deine bestehende Obergrenze auf Input‑Bytes beibehalten
-    if (bytes.Length > MAX_BYTES_LENGTH)
-      throw new ArgumentOutOfRangeException(nameof(bytes), "Input too large.");
+  //  // Deine bestehende Obergrenze auf Input‑Bytes beibehalten
+  //  if (bytes.Length > MAX_BYTES_LENGTH)
+  //    throw new ArgumentOutOfRangeException(nameof(bytes), "Input too large.");
 
-    var pool = ArrayPool<byte>.Shared;
-    writtenbytes = -1;
-    decompressed = [];
+  //  var pool = ArrayPool<byte>.Shared;
+  //  writtenbytes = -1;
+  //  decompressed = [];
 
-    int cnt = 2;
-    while (true)
-    {
-      ct.ThrowIfCancellationRequested();
+  //  int cnt = 2;
+  //  while (true)
+  //  {
+  //    ct.ThrowIfCancellationRequested();
 
-      // Kandidat für die Zielgröße: wächst exponentiell wie in deinem Original,
-      // aber niemals größer als MAX_BYTES_LENGTH
-      long candidateLong = (long)bytes.Length * (1L << cnt);
-      if (candidateLong <= 0) candidateLong = MAX_BYTES_LENGTH; // overflow safety
-      if (candidateLong > MAX_BYTES_LENGTH) candidateLong = MAX_BYTES_LENGTH;
-      int candidateSize = (int)candidateLong;
+  //    // Kandidat für die Zielgröße: wächst exponentiell wie in deinem Original,
+  //    // aber niemals größer als MAX_BYTES_LENGTH
+  //    long candidateLong = (long)bytes.Length * (1L << cnt);
+  //    if (candidateLong <= 0) candidateLong = MAX_BYTES_LENGTH; // overflow safety
+  //    if (candidateLong > MAX_BYTES_LENGTH) candidateLong = MAX_BYTES_LENGTH;
+  //    int candidateSize = (int)candidateLong;
 
-      var buffer = pool.Rent(candidateSize);
-      try
-      {
-        // TryDecompress nimmt ReadOnlySpan<byte> source und Span<byte> destination
-        // und gibt die tatsächlich geschriebenen Bytes in 'writtenbytes' zurück.
-        if (BrotliDecoder.TryDecompress(bytes, buffer, out writtenbytes))
-        {
-          // Kopiere das exakte Ergebnis in ein genau großes Array (sicher: kein gepooltes Array weiterreichen)
-          decompressed = buffer.AsSpan(0, writtenbytes).ToArray();
-          return true;
-        }
-      }
-      finally
-      {
-        // Buffer immer zurückgeben (wichtig!), ggf. clearArray: true, wenn sensible Daten vorhanden sind
-        pool.Return(buffer);
-      }
+  //    var buffer = pool.Rent(candidateSize);
+  //    try
+  //    {
+  //      // TryDecompress nimmt ReadOnlySpan<byte> source und Span<byte> destination
+  //      // und gibt die tatsächlich geschriebenen Bytes in 'writtenbytes' zurück.
+  //      if (BrotliDecoder.TryDecompress(bytes, buffer, out writtenbytes))
+  //      {
+  //        // Kopiere das exakte Ergebnis in ein genau großes Array (sicher: kein gepooltes Array weiterreichen)
+  //        decompressed = buffer.AsSpan(0, writtenbytes).ToArray();
+  //        return true;
+  //      }
+  //    }
+  //    finally
+  //    {
+  //      // Buffer immer zurückgeben (wichtig!), ggf. clearArray: true, wenn sensible Daten vorhanden sind
+  //      pool.Return(buffer);
+  //    }
 
-      // Wenn wir schon die Maximalgröße hatten und trotzdem nicht dekomprimieren konnten -> Abbruch
-      if (candidateSize >= MAX_BYTES_LENGTH) break;
+  //    // Wenn wir schon die Maximalgröße hatten und trotzdem nicht dekomprimieren konnten -> Abbruch
+  //    if (candidateSize >= MAX_BYTES_LENGTH) break;
 
-      // erhöhen wie in deinem Original (cnt++), Vorsicht: cnt nicht unendlich wachsen lassen
-      cnt++;
-      if (cnt > 30) break; // extra Sicherheitsgrenze (praktisch nie erreicht)
-    }
+  //    // erhöhen wie in deinem Original (cnt++), Vorsicht: cnt nicht unendlich wachsen lassen
+  //    cnt++;
+  //    if (cnt > 30) break; // extra Sicherheitsgrenze (praktisch nie erreicht)
+  //  }
 
-    // Falls keine Variante erfolgreich war
-    decompressed = Array.Empty<byte>();
-    writtenbytes = -1;
-    return false;
-  }
+  //  // Falls keine Variante erfolgreich war
+  //  decompressed = Array.Empty<byte>();
+  //  writtenbytes = -1;
+  //  return false;
+  //}
 
 
   #endregion Brotli Compress
