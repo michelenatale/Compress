@@ -176,7 +176,7 @@ public class CompressedNet
   /// <exception cref="ArgumentException">Thrown if <paramref name="bytes"/> is empty.</exception>
   /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="bytes"/> exceeds <see cref="MAX_BYTES_LENGTH"/>.</exception>
   public static byte[] CompressGZip(
-  ReadOnlySpan<byte> bytes, CancellationToken ct,
+    ReadOnlySpan<byte> bytes, CancellationToken ct,
     CompressionLevel compresslevel = CompressionLevel.Optimal)
   {
     AssertCompress(bytes);
@@ -298,10 +298,10 @@ public class CompressedNet
   /// <exception cref="ArgumentException">Thrown if <paramref name="bytes"/> is empty.</exception>
   /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="bytes"/> exceeds <see cref="MAX_BYTES_LENGTH"/>.</exception>
   public async static Task<byte[]> CompressGZipAsync(
-    byte[] bytes, CompressionLevel compresslevel =
+    ReadOnlyMemory<byte> bytes, CompressionLevel compresslevel =
       CompressionLevel.Optimal)
   {
-    AssertCompress(bytes);
+    AssertCompress(bytes.Span);
 
     await using var ms = new MemoryStream();
     await using (var gzip = new GZipStream(ms, compresslevel))
@@ -337,10 +337,10 @@ public class CompressedNet
   /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="bytes"/> exceeds <see cref="MAX_BYTES_LENGTH"/>.</exception>
   /// <exception cref="OperationCanceledException">Thrown if the operation is canceled via <paramref name="ct"/>.</exception>
   public async static Task<byte[]> CompressGZipAsync(
-    byte[] bytes, CancellationToken ct,
+    ReadOnlyMemory<byte> bytes, CancellationToken ct,
     CompressionLevel compresslevel = CompressionLevel.Optimal)
   {
-    AssertCompress(bytes);
+    AssertCompress(bytes.Span);
 
     await using var ms = new MemoryStream();
     await using (var gzip = new GZipStream(ms, compresslevel))
@@ -1457,10 +1457,10 @@ public class CompressedNet
   /// <exception cref="ArgumentException">Thrown if <paramref name="bytes"/> is empty.</exception>
   /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="bytes"/> exceeds <see cref="MAX_BYTES_LENGTH"/>.</exception>
   public async static Task<byte[]> CompressBrotliAsync(
-    byte[] bytes, CompressionLevel compresslevel =
+    ReadOnlyMemory<byte> bytes, CompressionLevel compresslevel =
       CompressionLevel.Optimal)
   {
-    AssertCompress(bytes);
+    AssertCompress(bytes.Span);
 
     await using var ms = new MemoryStream();
     await using (var brotli = new BrotliStream(ms, compresslevel))
@@ -1498,10 +1498,10 @@ public class CompressedNet
   /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="bytes"/> exceeds <see cref="MAX_BYTES_LENGTH"/>.</exception>
   /// <exception cref="OperationCanceledException">Thrown if the operation is canceled via <paramref name="ct"/>.</exception>
   public async static Task<byte[]> CompressBrotliAsync(
-    byte[] bytes, CancellationToken ct,
+    ReadOnlyMemory<byte> bytes, CancellationToken ct,
     CompressionLevel compresslevel = CompressionLevel.Optimal)
   {
-    AssertCompress(bytes);
+    AssertCompress(bytes.Span);
 
     await using var ms = new MemoryStream();
     await using (var brotli = new BrotliStream(ms, compresslevel))
