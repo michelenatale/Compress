@@ -99,10 +99,10 @@ public partial class ServicesCompress
     await using var fsright = new FileStream(right, FileMode.Open, FileAccess.Read, FileShare.Read, 1 << 20, true);
 
     using var sha = SHA512.Create();
-    var hashLeft = await sha.ComputeHashAsync(fsleft).ConfigureAwait(false);
-    var hashRight = await sha.ComputeHashAsync(fsright).ConfigureAwait(false);
+    var hashleft = await sha.ComputeHashAsync(fsleft).ConfigureAwait(false);
+    var hashright = await sha.ComputeHashAsync(fsright).ConfigureAwait(false);
 
-    return hashLeft.SequenceEqual(hashRight);
+    return hashleft.SequenceEqual(hashright);
   }
 
   /// <summary>
@@ -197,7 +197,7 @@ public partial class ServicesCompress
   public async static Task MultBytesInFileAsync(
     string filename, byte[] bytes, int mult)
   {
-    using var fsout = new FileStream(
+    await using var fsout = new FileStream(
       filename, FileMode.Create, FileAccess.Write);
 
     var length = bytes.Length;
