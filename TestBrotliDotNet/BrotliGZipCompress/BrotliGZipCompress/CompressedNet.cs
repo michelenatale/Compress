@@ -5,12 +5,10 @@
 //Asynchron: byte[] / Memory<T> → await-sicher, stabil über Task-Grenzen hinweg.
 
 
-
 using System.Buffers;
 using System.IO.Compression;
 
 namespace michele.natale.Compresses;
-
 
 
 /// <summary>
@@ -1009,9 +1007,8 @@ public class CompressedNet
     AssertCompress(bytes);
 
     using var ms = new MemoryStream();
-    using (var Brotli = new BrotliStream(ms, compresslevel))
-      Brotli.Write(bytes);
-
+    using (var brotli = new BrotliStream(ms, compresslevel))
+      brotli.Write(bytes);
     return ms.ToArray();
   }
 
@@ -1051,12 +1048,11 @@ public class CompressedNet
     CompressionLevel compresslevel = CompressionLevel.Optimal)
   {
     AssertCompress(bytes);
-
     ct.ThrowIfCancellationRequested();
 
     using var ms = new MemoryStream();
-    using (var Brotli = new BrotliStream(ms, compresslevel))
-      Brotli.Write(bytes);
+    using (var brotli = new BrotliStream(ms, compresslevel))
+      brotli.Write(bytes);
     return ms.ToArray();
   }
 
@@ -1113,8 +1109,7 @@ public class CompressedNet
 
     while (true)
     {
-      compressed = [];
-      writtenbytes = -1;
+      compressed = []; writtenbytes = -1;
       var maxlength = BrotliEncoder.GetMaxCompressedLength(cnt++ * bytes.Length);
       var buffer = pool.Rent(maxlength);
       try
@@ -1123,7 +1118,7 @@ public class CompressedNet
           bytes, buffer, out writtenbytes,
           quality, window))
         {
-          compressed = buffer.AsSpan(0,writtenbytes).ToArray();
+          compressed = buffer.AsSpan(0, writtenbytes).ToArray();
           return true;
         }
       }
@@ -1194,9 +1189,8 @@ public class CompressedNet
 
     while (true)
     {
-      compressed = [];
-      writtenbytes = -1;
       ct.ThrowIfCancellationRequested();
+      compressed = []; writtenbytes = -1;
 
       var maxlength = BrotliEncoder.GetMaxCompressedLength(cnt++ * bytes.Length);
       var buffer = pool.Rent(maxlength);
@@ -1247,8 +1241,8 @@ public class CompressedNet
   {
     using var msout = new MemoryStream();
     using var ms = new MemoryStream(bytes.ToArray());
-    using (var Brotli = new BrotliStream(ms, CompressionMode.Decompress))
-      Brotli.CopyTo(msout);
+    using (var brotli = new BrotliStream(ms, CompressionMode.Decompress))
+      brotli.CopyTo(msout);
 
     return msout.ToArray();
   }
@@ -1284,8 +1278,8 @@ public class CompressedNet
 
     using var msout = new MemoryStream();
     using var ms = new MemoryStream(bytes.ToArray());
-    using (var Brotli = new BrotliStream(ms, CompressionMode.Decompress))
-      Brotli.CopyTo(msout);
+    using (var brotli = new BrotliStream(ms, CompressionMode.Decompress))
+      brotli.CopyTo(msout);
 
     return msout.ToArray();
   }
@@ -1330,11 +1324,9 @@ public class CompressedNet
   {
     var cnt = 2;
     decompressed = [];
-    writtenbytes = -1;
-    var result = false;
     var pool = ArrayPool<byte>.Shared;
 
-    while (!result)
+    while (true)
     {
       writtenbytes = -1;
       var size = (1 << cnt++) * bytes.Length;
@@ -1358,8 +1350,6 @@ public class CompressedNet
         pool.Return(buffer);
       }
     }
-
-    return false;
   }
 
   /// <summary>
@@ -1405,11 +1395,9 @@ public class CompressedNet
   {
     var cnt = 2;
     decompressed = [];
-    writtenbytes = -1;
-    var result = false;
     var pool = ArrayPool<byte>.Shared;
 
-    while (!result)
+    while (true)
     {
       writtenbytes = -1;
       ct.ThrowIfCancellationRequested();
@@ -1425,7 +1413,6 @@ public class CompressedNet
         if (BrotliDecoder.TryDecompress(
           bytes, buffer, out writtenbytes))
         {
-          ct.ThrowIfCancellationRequested();
           decompressed = buffer.AsSpan(0, writtenbytes).ToArray();
           return true;
         }
@@ -1435,74 +1422,7 @@ public class CompressedNet
         pool.Return(buffer);
       }
     }
-
-    return false;
   }
-
-  //public static bool TryDecompressBrotli2(
-  //  ReadOnlySpan<byte> bytes, CancellationToken ct,
-  //  out byte[] decompressed, out int writtenbytes)
-  //{
-  //  const int MAX_BYTES_LENGTH = 8 * 1024 * 1024; // 8 MB, wie bei dir
-  //  if (bytes.Length == 0)
-  //  {
-  //    decompressed = Array.Empty<byte>();
-  //    writtenbytes = 0;
-  //    return true;
-  //  }
-
-  //  // Deine bestehende Obergrenze auf Input‑Bytes beibehalten
-  //  if (bytes.Length > MAX_BYTES_LENGTH)
-  //    throw new ArgumentOutOfRangeException(nameof(bytes), "Input too large.");
-
-  //  var pool = ArrayPool<byte>.Shared;
-  //  writtenbytes = -1;
-  //  decompressed = [];
-
-  //  int cnt = 2;
-  //  while (true)
-  //  {
-  //    ct.ThrowIfCancellationRequested();
-
-  //    // Kandidat für die Zielgröße: wächst exponentiell wie in deinem Original,
-  //    // aber niemals größer als MAX_BYTES_LENGTH
-  //    long candidateLong = (long)bytes.Length * (1L << cnt);
-  //    if (candidateLong <= 0) candidateLong = MAX_BYTES_LENGTH; // overflow safety
-  //    if (candidateLong > MAX_BYTES_LENGTH) candidateLong = MAX_BYTES_LENGTH;
-  //    int candidateSize = (int)candidateLong;
-
-  //    var buffer = pool.Rent(candidateSize);
-  //    try
-  //    {
-  //      // TryDecompress nimmt ReadOnlySpan<byte> source und Span<byte> destination
-  //      // und gibt die tatsächlich geschriebenen Bytes in 'writtenbytes' zurück.
-  //      if (BrotliDecoder.TryDecompress(bytes, buffer, out writtenbytes))
-  //      {
-  //        // Kopiere das exakte Ergebnis in ein genau großes Array (sicher: kein gepooltes Array weiterreichen)
-  //        decompressed = buffer.AsSpan(0, writtenbytes).ToArray();
-  //        return true;
-  //      }
-  //    }
-  //    finally
-  //    {
-  //      // Buffer immer zurückgeben (wichtig!), ggf. clearArray: true, wenn sensible Daten vorhanden sind
-  //      pool.Return(buffer);
-  //    }
-
-  //    // Wenn wir schon die Maximalgröße hatten und trotzdem nicht dekomprimieren konnten -> Abbruch
-  //    if (candidateSize >= MAX_BYTES_LENGTH) break;
-
-  //    // erhöhen wie in deinem Original (cnt++), Vorsicht: cnt nicht unendlich wachsen lassen
-  //    cnt++;
-  //    if (cnt > 30) break; // extra Sicherheitsgrenze (praktisch nie erreicht)
-  //  }
-
-  //  // Falls keine Variante erfolgreich war
-  //  decompressed = Array.Empty<byte>();
-  //  writtenbytes = -1;
-  //  return false;
-  //}
-
 
   #endregion Brotli Compress
 
@@ -1543,8 +1463,8 @@ public class CompressedNet
     AssertCompress(bytes);
 
     await using var ms = new MemoryStream();
-    await using (var Brotli = new BrotliStream(ms, compresslevel))
-      await Brotli.WriteAsync(bytes).ConfigureAwait(false);
+    await using (var brotli = new BrotliStream(ms, compresslevel))
+      await brotli.WriteAsync(bytes).ConfigureAwait(false);
 
     return ms.ToArray();
   }
@@ -1584,8 +1504,8 @@ public class CompressedNet
     AssertCompress(bytes);
 
     await using var ms = new MemoryStream();
-    await using (var Brotli = new BrotliStream(ms, compresslevel))
-      await Brotli.WriteAsync(bytes, ct).ConfigureAwait(false);
+    await using (var brotli = new BrotliStream(ms, compresslevel))
+      await brotli.WriteAsync(bytes, ct).ConfigureAwait(false);
 
     return ms.ToArray();
   }
@@ -1621,8 +1541,8 @@ public class CompressedNet
   {
     await using var msout = new MemoryStream();
     await using var ms = new MemoryStream(bytes);
-    await using (var Brotli = new BrotliStream(ms, CompressionMode.Decompress))
-      await Brotli.CopyToAsync(msout).ConfigureAwait(false);
+    await using (var brotli = new BrotliStream(ms, CompressionMode.Decompress))
+      await brotli.CopyToAsync(msout).ConfigureAwait(false);
 
     return msout.ToArray();
   }
@@ -1652,8 +1572,8 @@ public class CompressedNet
   {
     await using var msout = new MemoryStream();
     await using var ms = new MemoryStream(bytes);
-    await using (var Brotli = new BrotliStream(ms, CompressionMode.Decompress))
-      await Brotli.CopyToAsync(msout, ct).ConfigureAwait(false);
+    await using (var brotli = new BrotliStream(ms, CompressionMode.Decompress))
+      await brotli.CopyToAsync(msout, ct).ConfigureAwait(false);
 
     return msout.ToArray();
   }
@@ -1733,9 +1653,9 @@ public class CompressedNet
     int readbytes;
     var buffer = new byte[buffersize];
 
-    using var Brotli = new BrotliStream(output, compresslevel, false);
+    using var brotli = new BrotliStream(output, compresslevel, false);
     while ((readbytes = input.Read(buffer)) > 0)
-      Brotli.Write(buffer, 0, readbytes);
+      brotli.Write(buffer, 0, readbytes);
   }
 
   /// <summary>
@@ -1758,11 +1678,11 @@ public class CompressedNet
     int readbytes;
     var buffer = new byte[buffersize];
 
-    using var Brotli = new BrotliStream(output, compresslevel, false);
+    using var brotli = new BrotliStream(output, compresslevel, false);
     while ((readbytes = input.Read(buffer)) > 0)
     {
       ct.ThrowIfCancellationRequested();
-      Brotli.Write(buffer, 0, readbytes);
+      brotli.Write(buffer, 0, readbytes);
     }
   }
 
@@ -1822,8 +1742,8 @@ public class CompressedNet
     int readbytes;
     var buffer = new byte[buffersize];
 
-    using var Brotli = new BrotliStream(input, CompressionMode.Decompress);
-    while ((readbytes = Brotli.Read(buffer)) > 0)
+    using var brotli = new BrotliStream(input, CompressionMode.Decompress);
+    while ((readbytes = brotli.Read(buffer)) > 0)
       output.Write(buffer, 0, readbytes);
   }
 
@@ -1869,8 +1789,8 @@ public class CompressedNet
     int readbytes;
     var buffer = new byte[buffersize];
 
-    using var Brotli = new BrotliStream(input, CompressionMode.Decompress);
-    while ((readbytes = Brotli.Read(buffer)) > 0)
+    using var brotli = new BrotliStream(input, CompressionMode.Decompress);
+    while ((readbytes = brotli.Read(buffer)) > 0)
     {
       ct.ThrowIfCancellationRequested();
       output.Write(buffer, 0, readbytes);
@@ -1946,10 +1866,10 @@ public class CompressedNet
     int readbytes;
     var buffer = new byte[buffersize];
 
-    await using var Brotli = new BrotliStream(output, compresslevel);
+    await using var brotli = new BrotliStream(output, compresslevel);
     while ((readbytes = await input.ReadAsync(
       buffer.AsMemory(0, buffer.Length)).ConfigureAwait(false)) > 0)
-      await Brotli.WriteAsync(buffer.AsMemory(0, readbytes)).ConfigureAwait(false);
+      await brotli.WriteAsync(buffer.AsMemory(0, readbytes)).ConfigureAwait(false);
   }
 
   /// <summary>
@@ -1973,10 +1893,10 @@ public class CompressedNet
     int readbytes;
     var buffer = new byte[buffersize];
 
-    await using var Brotli = new BrotliStream(output, compresslevel);
+    await using var brotli = new BrotliStream(output, compresslevel);
     while ((readbytes = await input.ReadAsync(
       buffer.AsMemory(0, buffer.Length), ct).ConfigureAwait(false)) > 0)
-      await Brotli.WriteAsync(buffer.AsMemory(0, readbytes), ct).ConfigureAwait(false);
+      await brotli.WriteAsync(buffer.AsMemory(0, readbytes), ct).ConfigureAwait(false);
   }
 
 
@@ -2047,8 +1967,8 @@ public class CompressedNet
     int readbytes;
     var buffer = new byte[buffersize];
 
-    await using var Brotli = new BrotliStream(input, CompressionMode.Decompress);
-    while ((readbytes = await Brotli.ReadAsync(
+    await using var brotli = new BrotliStream(input, CompressionMode.Decompress);
+    while ((readbytes = await brotli.ReadAsync(
       buffer.AsMemory(0, buffer.Length)).ConfigureAwait(false)) > 0)
       await output.WriteAsync(buffer.AsMemory(0, readbytes)).ConfigureAwait(false);
   }
@@ -2078,8 +1998,8 @@ public class CompressedNet
     int readbytes;
     var buffer = new byte[buffersize];
 
-    await using var Brotli = new BrotliStream(input, CompressionMode.Decompress);
-    while ((readbytes = await Brotli.ReadAsync(
+    await using var brotli = new BrotliStream(input, CompressionMode.Decompress);
+    while ((readbytes = await brotli.ReadAsync(
       buffer.AsMemory(0, buffer.Length), ct).ConfigureAwait(false)) > 0)
       await output.WriteAsync(buffer.AsMemory(0, readbytes), ct).ConfigureAwait(false);
   }
