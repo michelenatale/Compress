@@ -9,46 +9,38 @@ There is a [test file C#](https://github.com/michelenatale/Compress/blob/main/Te
 Here is a little code for compressing and decompressing. Of course, all methods are documented to explain why it is done this way: 
 ```
 public static bool TryCompressBrotli(
-  ReadOnlySpan<byte> bytes, CancellationToken ct,
+  ReadOnlySpan<byte> bytes,
   out byte[] compressed, out int writtenbytes,
   int quality = 4, int window = 22)
 {
   AssertCompress(bytes, quality, window);
 
   var cnt = 1;
-  byte[] buffer = [];
   var pool = ArrayPool<byte>.Shared;
 
-  try
+  while (true)
   {
-    while (true)
+    compressed = []; writtenbytes = -1;
+    var maxlength = BrotliEncoder.GetMaxCompressedLength(cnt++ * bytes.Length);
+    var buffer = pool.Rent(maxlength);
+    try
     {
-      compressed = [];
-      writtenbytes = -1;
-      ct.ThrowIfCancellationRequested();
-
-      var maxlength = BrotliEncoder.GetMaxCompressedLength(cnt++ * bytes.Length);
-      buffer = pool.Rent(maxlength);
-
-      var span = buffer.AsSpan(0, maxlength);
       if (BrotliEncoder.TryCompress(
-        bytes, span, out writtenbytes,
+        bytes, buffer, out writtenbytes,
         quality, window))
       {
-        ct.ThrowIfCancellationRequested();
-        compressed = new byte[writtenbytes];
-        Buffer.BlockCopy(buffer, 0, compressed, 0, writtenbytes);
+        compressed = buffer.AsSpan(0, writtenbytes).ToArray();
         return true;
       }
-
-      if (cnt > 3) break;
     }
-    return false;
+    finally
+    {
+      pool.Return(buffer);
+    }
+
+    if (cnt > 3) break;
   }
-  finally
-  {
-    pool.Return(buffer);
-  }
+  return false;
 }
 ```
 ```
