@@ -9,7 +9,7 @@ There is a [test file C#](https://github.com/michelenatale/Compress/blob/main/Te
 Here is a little code for compressing and decompressing. Of course, all methods are documented to explain why it is done this way: 
 ```
 public static bool TryCompressBrotli(
-  ReadOnlySpan<byte> bytes,
+  ReadOnlySpan<byte> bytes, CancellationToken ct,
   out byte[] compressed, out int writtenbytes,
   int quality = 4, int window = 22)
 {
@@ -20,7 +20,9 @@ public static bool TryCompressBrotli(
 
   while (true)
   {
+    ct.ThrowIfCancellationRequested();
     compressed = []; writtenbytes = -1;
+
     var maxlength = BrotliEncoder.GetMaxCompressedLength(cnt++ * bytes.Length);
     var buffer = pool.Rent(maxlength);
     try
@@ -29,6 +31,7 @@ public static bool TryCompressBrotli(
         bytes, buffer, out writtenbytes,
         quality, window))
       {
+        ct.ThrowIfCancellationRequested();
         compressed = buffer.AsSpan(0, writtenbytes).ToArray();
         return true;
       }
@@ -50,11 +53,9 @@ public static bool TryDecompressBrotli(
 {
   var cnt = 2;
   decompressed = [];
-  writtenbytes = -1;
-  var result = false;
   var pool = ArrayPool<byte>.Shared;
 
-  while (!result)
+  while (true)
   {
     writtenbytes = -1;
     ct.ThrowIfCancellationRequested();
@@ -79,7 +80,6 @@ public static bool TryDecompressBrotli(
       pool.Return(buffer);
     }
   }
-  return false;
 }
 ```
 
