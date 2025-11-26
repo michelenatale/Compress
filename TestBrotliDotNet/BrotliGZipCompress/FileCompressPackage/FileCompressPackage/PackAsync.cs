@@ -173,7 +173,7 @@ partial class FileCompressPackage
     output.Position = newlength;
     output.SetLength(newlength);
 
-    Console.WriteLine($"© FileCompressPackage 2025 - created by Michele Natale 2025");
+    Console.WriteLine($"© FileCompressPackage 2025 - created by © Michele Natale 2025");
     Console.WriteLine($"CompressType = {(CompressionType)header.CompressionType}, " +
     $"PACK: {Path.GetFileNameWithoutExtension(filepath)} ({header.OriginalLength} Bytes), " +
     $"Created: {fileinfos.CreationTimeUtc}, Last Accessed: {fileinfos.LastAccessTimeUtc}, " +

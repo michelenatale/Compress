@@ -98,7 +98,7 @@ partial class FileCompressPackage
       File.SetLastWriteTimeUtc(outpath, lastwritetime);
       File.SetLastAccessTimeUtc(outpath, lastaccesstime);
 
-      Console.WriteLine($"© FileCompressPackage 2025 - created by Michele Natale 2025");
+      Console.WriteLine($"© FileCompressPackage 2025 - created by © Michele Natale 2025");
       Console.WriteLine($"CompressType = {(CompressionType)header.CompressionType}, " +
         $"UNPACK: {filename} ({header.OriginalLength} Bytes), " +
         $"Created: {creationtime}, Last Accessed: {lastaccesstime}, " +
