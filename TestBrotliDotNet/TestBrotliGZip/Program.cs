@@ -9,7 +9,6 @@ public class Program
 {
   public async static Task Main()
   {
-
     await CompressedNetTest.Start();
     await FileCompressPackageTest.Start();
 

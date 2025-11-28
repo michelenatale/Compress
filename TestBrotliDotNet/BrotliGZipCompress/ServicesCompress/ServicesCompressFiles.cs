@@ -8,6 +8,8 @@
 namespace michele.natale.Services;
 
 using Compresses;
+using Microsoft.VisualBasic;
+using System.IO;
 
 partial class ServicesCompress
 {
@@ -46,10 +48,9 @@ partial class ServicesCompress
   /// <remarks>
   /// The search pattern is <c>*.*</c>, so all files are returned regardless of extension.
   /// </remarks>
-  public static string[] AllFilesInFolder(string foldername)
-  {
-    return Directory.GetFiles(foldername, "*.*");
-  }
+  public static string[] AllFilesInFolder(string foldername) =>   
+    Directory.GetFiles(foldername, "*.*", SearchOption.AllDirectories);
+   
 
   /// <summary>
   /// Ensures that the specified filename has the correct archive extension (<c>.fcp</c>).
@@ -108,5 +109,26 @@ partial class ServicesCompress
 
     return new FileInfo(Path.Combine(folder!, fname + ext));
 
+  }
+
+  public static void CheckFolderFromFilePath(string filepath)
+  {
+      var dirpath = Path.GetDirectoryName(filepath);
+      if (!Directory.Exists(dirpath))
+        Directory.CreateDirectory(dirpath!);
+  }
+
+  public static FileAttributes IsFileOrFolder(string strpath)
+  {
+    if (File.Exists(strpath) || Directory.Exists(strpath))
+    {
+      var attr = File.GetAttributes(strpath);
+
+      if (attr.HasFlag(FileAttributes.Directory))
+        return FileAttributes.Directory;
+      else return FileAttributes.Normal; //File
+    }
+
+    throw new NotImplementedException();
   }
 }
