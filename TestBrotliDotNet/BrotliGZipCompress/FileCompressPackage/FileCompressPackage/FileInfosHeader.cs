@@ -23,13 +23,13 @@ namespace michele.natale.Compresses;
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct FileInfosHeader
 {
-  public int NameLength;                // Länge des Dateinamens (UTF-8)
-  public long CompressedLength;         // Länge der komprimierten Daten
-  public long OriginalLength;           // Länge der Originaldatei
+  public int NameLength;                // Length of the file name (UTF-8)
+  public long CompressedLength;         // Length of the compressed data
+  public long OriginalLength;           // Length of the original file
   public byte CompressionType;          // 1 = Brotli, 2 = GZip
   public byte FCP_Type;                 // 1 = File, 2 = Archiv
 
-  public long CreationTimeUtcTicks;     // Erstellungsdatum der Datei
-  public long LastWriteTimeUtcTicks;    // Datum der letzten Änderung
-  public long LastAccessTimeUtcTicks;   // Datum der letzten Speicherung  
+  public long CreationTimeUtcTicks;     // Date the file was created
+  public long LastWriteTimeUtcTicks;    // Date of last modification
+  public long LastAccessTimeUtcTicks;   // Date of last save 
 }

@@ -6,6 +6,7 @@ namespace michele.natale.Tests;
 using Services;
 using Compresses;
 
+
 public class CompressedNetTest
 {
   private static string OriginalString =>
@@ -32,7 +33,6 @@ public class CompressedNetTest
 
     Console.WriteLine();
   }
-
 
   private static void TestGzip()
   {

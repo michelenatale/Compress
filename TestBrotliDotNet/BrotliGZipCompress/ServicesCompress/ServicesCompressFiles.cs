@@ -111,24 +111,32 @@ partial class ServicesCompress
 
   }
 
+  /// <summary>
+  /// Ensures that the directory portion of a given file path exists.  
+  /// If the directory does not exist, it will be created.
+  /// </summary>
+  /// <param name="filepath">
+  /// A full file path (including file name). The directory part of this path
+  /// will be checked and created if necessary.
+  /// </param>
+  /// <remarks>
+  /// This method is useful before writing to a file path to guarantee that
+  /// the target directory structure is present.  
+  /// It does not create the file itself, only the directory.
+  /// </remarks>
+  /// <example>
+  /// Example usage:
+  /// <code>
+  /// var targetFile = @"C:\logs\app\output.txt";
+  /// CheckFolderFromFilePath(targetFile);
+  /// using var writer = new StreamWriter(targetFile);
+  /// await writer.WriteLineAsync("Hello World!");
+  /// </code>
+  /// </example>
   public static void CheckFolderFromFilePath(string filepath)
   {
       var dirpath = Path.GetDirectoryName(filepath);
       if (!Directory.Exists(dirpath))
         Directory.CreateDirectory(dirpath!);
-  }
-
-  public static FileAttributes IsFileOrFolder(string strpath)
-  {
-    if (File.Exists(strpath) || Directory.Exists(strpath))
-    {
-      var attr = File.GetAttributes(strpath);
-
-      if (attr.HasFlag(FileAttributes.Directory))
-        return FileAttributes.Directory;
-      else return FileAttributes.Normal; //File
-    }
-
-    throw new NotImplementedException();
   }
 }

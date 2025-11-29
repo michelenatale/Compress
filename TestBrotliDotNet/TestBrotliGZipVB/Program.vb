@@ -7,6 +7,10 @@ Public Module Program
   Public Sub Main()
     StartAsyncHelper.Start().
       GetAwaiter().GetResult()
+
+    Console.WriteLine()
+    Console.WriteLine("Finish")
+    Console.ReadLine()
   End Sub
 End Module
 

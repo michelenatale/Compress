@@ -3,15 +3,24 @@
 namespace michele.natale.Compresses;
 
 
+/// <summary>
+/// Defines the type of FileCompressPackage (FCP) 
+/// entry stored in the archive.
+/// </summary>
 public enum FcpType : byte
 {
   /// <summary>
-  /// The file data is compressed using the Brotli algorithm.
+  /// Represents a single file entry.  
+  /// The file data is stored in compressed form.
   /// </summary>
   File = 1,
 
   /// <summary>
-  /// The file data is compressed using the GZip algorithm.
+  /// Represents a multi-file archive entry.  
+  /// The archive contains multiple files and directories packed together.
   /// </summary>
   Archiv = 2,
 }
+
+
+

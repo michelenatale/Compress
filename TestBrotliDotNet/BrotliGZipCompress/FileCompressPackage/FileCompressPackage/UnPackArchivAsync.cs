@@ -1,5 +1,5 @@
 ﻿
- 
+
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
@@ -11,12 +11,37 @@ using Services;
 
 partial class FileCompressPackage
 {
-  public async static Task UnPackArchivAsync(string archivepath, string outputfolder)
+
+  /// <summary>
+  /// Extracts all files from a given archive into the specified output folder.
+  /// </summary>
+  /// <param name="archivepath">
+  /// Path to the archive file to be unpacked.
+  /// </param>
+  /// <param name="outputfolder">
+  /// Destination folder where the extracted files will be written.
+  /// If the folder already exists, it will be deleted and recreated.
+  /// </param>
+  /// <param name="buffersize">
+  /// Size of the buffer in bytes used for stream copy operations.
+  /// Default: 81920.
+  /// </param>
+  /// <returns>
+  /// A task representing the asynchronous unpacking operation.
+  /// </returns>
+  /// <exception cref="FileNotFoundException">
+  /// Thrown if the archive file does not exist.
+  /// </exception>
+  /// <remarks>
+  /// This method deletes the output folder before extraction to ensure a clean state.
+  /// </remarks>
+  public async static Task UnPackArchivAsync(
+    string archivepath, string outputfolder, int buffersize = 81920)
   {
     ServicesCompress.DeleteFolder(outputfolder, true);
     Directory.CreateDirectory(outputfolder);
     await using var fsin = new FileStream(archivepath, FileMode.Open, FileAccess.Read);
-    await ReadArchivAsync(fsin, outputfolder);
+    await ReadArchivAsync(fsin, outputfolder, buffersize);
   }
 
   private async static Task ReadArchivAsync(
@@ -68,6 +93,8 @@ partial class FileCompressPackage
         $"Created: {creationtime}, Last Accessed: {lastaccesstime}, " +
         $"Last Updated: {lastwritetime}");
     }
+
+
     Console.WriteLine();
   }
 }

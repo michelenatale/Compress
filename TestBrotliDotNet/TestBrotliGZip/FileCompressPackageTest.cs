@@ -13,11 +13,9 @@ public class FileCompressPackageTest
 {
   public async static Task Start()
   {
-
     await TestPackNoneFileAsync();
     await TestPackGZipFileAsync();
     await TestPackBrotliFileAsync();
-
 
     string srcfolder = "sourcefolder"; 
     await PreparationAsync(srcfolder);
@@ -38,7 +36,7 @@ public class FileCompressPackageTest
     await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.None);
 
     // UnPack Files
-    await FileCompressPackage.UnPackFileAsync(archivepath, outputfolder);
+    await FileCompressPackage.UnPackAsync(archivepath, outputfolder);
 
     if (!FileEqualsSpec(packlist, outputfolder))
       throw new Exception();
@@ -55,7 +53,7 @@ public class FileCompressPackageTest
     await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.GZip);
 
     // UnPack Files
-    await FileCompressPackage.UnPackFileAsync(archivepath, outputfolder);
+    await FileCompressPackage.UnPackAsync(archivepath, outputfolder);
 
     if (!FileEqualsSpec(packlist, outputfolder))
       throw new Exception();
@@ -72,7 +70,7 @@ public class FileCompressPackageTest
     await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.Brotli);
 
     // UnPack Files
-    await FileCompressPackage.UnPackFileAsync(archivepath, outputfolder);
+    await FileCompressPackage.UnPackAsync(archivepath, outputfolder);
 
     if (!FileEqualsSpec(packlist, outputfolder))
       throw new Exception();
@@ -89,7 +87,7 @@ public class FileCompressPackageTest
     await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.None);
 
     // UnPack Archiv
-    await FileCompressPackage.UnPackArchivAsync(archivepath, outputfolder);
+    await FileCompressPackage.UnPackAsync(archivepath, outputfolder);
 
     if (!FileEqualsSpec(srcfolder, outputfolder))
       throw new Exception();
@@ -105,13 +103,14 @@ public class FileCompressPackageTest
     await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.GZip);
 
     // UnPack Archiv
-    await FileCompressPackage.UnPackArchivAsync(archivepath, outputfolder);
+    await FileCompressPackage.UnPackAsync(archivepath, outputfolder);
 
     if (!FileEqualsSpec(srcfolder, outputfolder))
       throw new Exception();
 
     Console.WriteLine();
   }
+
 
   private async static Task TestPackBrotliArchivAsync(string srcfolder)
   {
@@ -121,7 +120,7 @@ public class FileCompressPackageTest
     await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.Brotli);
 
     // UnPack Archiv
-    await FileCompressPackage.UnPackArchivAsync(archivepath, outputfolder);
+    await FileCompressPackage.UnPackAsync(archivepath, outputfolder);
 
     if (!FileEqualsSpec(srcfolder, outputfolder))
       throw new Exception();
@@ -139,24 +138,6 @@ public class FileCompressPackageTest
     return true;
   }
 
-  //private static bool FileEqualsSpec(string filefolder, string outputfolder)
-  //{
-  //  var left = new DirectoryInfo(filefolder)
-  //    .GetFiles("*.*", SearchOption.AllDirectories);
-
-  //  var right = new DirectoryInfo(outputfolder)
-  //   .GetFiles("*.*", SearchOption.AllDirectories);
-
-  //  if (!Equality(left, right))
-  //    return false;
-
-  //  var length = left.Length;
-  //  for (var i = 0; i < length; i++)
-  //    if (!FileEquals(left[i].FullName, right[i].FullName))
-  //      return false;
-  //  return true;
-  //}
-
   private static bool FileEqualsSpec(string srcfolder, string destfolder)
   {
     var left = new DirectoryInfo(srcfolder)
@@ -164,7 +145,6 @@ public class FileCompressPackageTest
 
     var right = new DirectoryInfo(destfolder)
       .GetFiles("*.*", SearchOption.AllDirectories).OrderBy(x => x.FullName).ToArray();
-
 
     if (EqualitySpec(left, right, srcfolder))
     {
@@ -216,7 +196,7 @@ public class FileCompressPackageTest
   }
 
   private async static Task CreateRngFolders(
-    string basefolder, string[] files)
+   string basefolder, string[] files)
   {
     var rand = Random.Shared;
 
@@ -224,23 +204,31 @@ public class FileCompressPackageTest
       Directory.Delete(basefolder, true);
 
     Directory.CreateDirectory(basefolder);
+    var file = files[rand.Next(files.Length)];
+    var dest = Path.Combine(basefolder, file);
+    await CopyFileAsync(file, dest, overwrite: true);
     for (int i = 0; i < 3; i++)
     {
       var subroot = Path.Combine(basefolder, RngFolderName(8));
       Directory.CreateDirectory(subroot);
 
       var current = subroot;
+      file = files[rand.Next(files.Length)];
+      dest = Path.Combine(current, file);
+      await CopyFileAsync(file, dest, overwrite: true);
       for (var depth = 0; depth < 3; depth++)
       {
         current = Path.Combine(current, RngFolderName(8));
         Directory.CreateDirectory(current);
 
-        if (rand.NextDouble() < 0.95) // 95% Chance
-        {
-          var file = files[rand.Next(files.Length)];
-          var dest = Path.Combine(current, file);
-          await CopyFileAsync(file, dest, overwrite: true);
-        }
+        var c = rand.Next(files.Length) + 1;
+        for (int j = 0; j < c; j++)
+          if (rand.NextDouble() < 0.95) // 95% Chance
+          {
+            file = files[rand.Next(files.Length)];
+            dest = Path.Combine(current, file);
+            await CopyFileAsync(file, dest, overwrite: true);
+          }
       }
     }
   }

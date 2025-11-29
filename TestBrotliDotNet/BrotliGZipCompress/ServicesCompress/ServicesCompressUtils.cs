@@ -167,23 +167,4 @@ public partial class ServicesCompress
       await fsout.WriteAsync(bytes.AsMemory(0, length))
         .ConfigureAwait(false);
   }
-
-
-  //public async static Task RngByteFileAsync(
-  //  string filename, int size, int buffersize = 1 << 20)
-  //{
-  //  await using var fsout = new FileStream(filename, FileMode.Create, FileAccess.Write);
-
-  //  int sumbytes = size;
-  //  var rand = Random.Shared;
-  //  var buffer = new byte[buffersize];
-
-  //  while (sumbytes > 0)
-  //  {
-  //    rand.NextBytes(buffer);
-  //    var sz = sumbytes - buffersize >= 0 ? buffersize : sumbytes;
-  //    await fsout.WriteAsync(buffer.AsMemory(0, sz)).ConfigureAwait(false);
-  //    sumbytes -= sz;
-  //  }
-  //}
 }

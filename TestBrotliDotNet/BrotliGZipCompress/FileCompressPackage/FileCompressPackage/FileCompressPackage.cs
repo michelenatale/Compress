@@ -27,6 +27,4 @@ public partial class FileCompressPackage
   /// </summary>
   public const string EXTENSION = ".fcp";
 
-
-
 }

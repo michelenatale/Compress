@@ -25,7 +25,7 @@ Namespace michele.natale.Tests
       Dim outputfolder As String = "output", archivepath As String = "test.fcp"
       Dim packlist = New String() {"data2.txt", "data3.txt", "data2.txt", "data3.txt"}
       Await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.None)
-      Await FileCompressPackage.UnPackFileAsync(archivepath, outputfolder)
+      Await FileCompressPackage.UnPackAsync(archivepath, outputfolder)
       If Not FileEqualsSpec(packlist, outputfolder) Then Throw New Exception()
       Console.WriteLine()
     End Function
@@ -34,7 +34,7 @@ Namespace michele.natale.Tests
       Dim outputfolder As String = "output", archivepath As String = "test.fcp"
       Dim packlist = New String() {"data2.txt", "data3.txt", "data2.txt", "data3.txt"}
       Await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.GZip)
-      Await FileCompressPackage.UnPackFileAsync(archivepath, outputfolder)
+      Await FileCompressPackage.UnPackAsync(archivepath, outputfolder)
       If Not FileEqualsSpec(packlist, outputfolder) Then Throw New Exception()
       Console.WriteLine()
     End Function
@@ -43,7 +43,7 @@ Namespace michele.natale.Tests
       Dim outputfolder As String = "output", archivepath As String = "test.fcp"
       Dim packlist = New String() {"data2.txt", "data3.txt", "data2.txt", "data3.txt"}
       Await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.Brotli)
-      Await FileCompressPackage.UnPackFileAsync(archivepath, outputfolder)
+      Await FileCompressPackage.UnPackAsync(archivepath, outputfolder)
       If Not FileEqualsSpec(packlist, outputfolder) Then Throw New Exception()
       Console.WriteLine()
     End Function
@@ -56,7 +56,7 @@ Namespace michele.natale.Tests
       Await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.None)
 
       ' UnPack Archiv
-      Await FileCompressPackage.UnPackArchivAsync(archivepath, outputfolder)
+      Await FileCompressPackage.UnPackAsync(archivepath, outputfolder)
 
       If Not FileEqualsSpec(srcfolder, outputfolder) Then
         Throw New Exception()
@@ -73,7 +73,7 @@ Namespace michele.natale.Tests
       Await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.GZip)
 
       ' UnPack Archiv
-      Await FileCompressPackage.UnPackArchivAsync(archivepath, outputfolder)
+      Await FileCompressPackage.UnPackAsync(archivepath, outputfolder)
 
       If Not FileEqualsSpec(srcfolder, outputfolder) Then
         Throw New Exception()
@@ -90,7 +90,7 @@ Namespace michele.natale.Tests
       Await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.Brotli)
 
       ' UnPack Archiv
-      Await FileCompressPackage.UnPackArchivAsync(archivepath, outputfolder)
+      Await FileCompressPackage.UnPackAsync(archivepath, outputfolder)
 
       If Not FileEqualsSpec(srcfolder, outputfolder) Then
         Throw New Exception()
@@ -175,20 +175,31 @@ Namespace michele.natale.Tests
       End If
 
       Directory.CreateDirectory(basefolder)
+      Dim file = files(rand.Next(files.Length))
+      Dim dest = Path.Combine(basefolder, file)
+      Await CopyFileAsync(file, dest, overwrite:=True)
+
       For i As Integer = 0 To 2
         Dim subroot = Path.Combine(basefolder, RngFolderName(8))
         Directory.CreateDirectory(subroot)
 
         Dim current = subroot
+        file = files(rand.Next(files.Length))
+        dest = Path.Combine(current, file)
+        Await CopyFileAsync(file, dest, overwrite:=True)
+
         For depth As Integer = 0 To 2
           current = Path.Combine(current, RngFolderName(8))
           Directory.CreateDirectory(current)
 
-          If rand.NextDouble() < 0.95 Then ' 95% Chance
-            Dim file = files(rand.Next(files.Length))
-            Dim dest = Path.Combine(current, file)
-            Await CopyFileAsync(file, dest, overwrite:=True)
-          End If
+          Dim c = rand.Next(files.Length)
+          For cc As Int32 = 0 To c
+            If rand.NextDouble() < 0.95 Then ' 95% Chance
+              file = files(rand.Next(files.Length))
+              dest = Path.Combine(current, file)
+              Await CopyFileAsync(file, dest, overwrite:=True)
+            End If
+          Next
         Next
       Next
     End Function

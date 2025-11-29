@@ -49,12 +49,13 @@ partial class FileCompressPackage
   /// await UnPackFileAsync(archive, output);
   /// </code>
   /// </example>
-  public async static Task UnPackFileAsync(string archivepath, string outputfolder)
+  public async static Task UnPackFileAsync(
+    string archivepath, string outputfolder, int buffersize = 81920)
   {
     ServicesCompress.DeleteFolder(outputfolder, true);
     Directory.CreateDirectory(outputfolder);
     await using var fsin = new FileStream(archivepath, FileMode.Open, FileAccess.Read);
-    await ReadFilesAsync(fsin, outputfolder);
+    await ReadFilesAsync(fsin, outputfolder, buffersize);
   }
 
   private async static Task ReadFilesAsync(

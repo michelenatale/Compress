@@ -11,12 +11,69 @@ using System;
 
 partial class FileCompressPackage
 {
+
+
+  /// <summary>
+  /// Creates an archive from all files in a source folder and writes it
+  /// to the specified archive file. This overload allows using the
+  /// <see cref="CompressionType"/> enum.
+  /// </summary>
+  /// <param name="srcfolder">
+  /// The source folder whose files will be recursively added to the archive.
+  /// </param>
+  /// <param name="archivepath">
+  /// The target path of the archive file. The file extension is validated
+  /// by <see cref="ServicesCompress.CheckFCPFileExtensionAsync"/>.
+  /// </param>
+  /// <param name="compressiontype">
+  /// The desired compression type as <see cref="CompressionType"/>.
+  /// </param>
+  /// <param name="buffersize">
+  /// Size of the buffer in bytes used for stream copy operations.
+  /// Default: 81920.
+  /// </param>
+  /// <param name="compresslevel">
+  /// Compression level, e.g. <see cref="CompressionLevel.Optimal"/>.
+  /// </param>
+  /// <returns>
+  /// A task representing the asynchronous archiving operation.
+  /// </returns>
+  /// <exception cref="DirectoryNotFoundException">
+  /// Thrown if the source folder does not exist.
+  /// </exception>
   public async static Task PackArchivAsync(
       string srcfolder, string archivepath, CompressionType compressiontype,
       int buffersize = 81920, CompressionLevel compresslevel = CompressionLevel.Optimal) =>
         await PackArchivAsync(srcfolder, archivepath, (byte)compressiontype, buffersize, compresslevel);
 
-
+  /// <summary>
+  /// Creates an archive from all files in a source folder and writes it
+  /// to the specified archive file. This overload allows using a compression
+  /// type as a byte value.
+  /// </summary>
+  /// <param name="srcfolder">
+  /// The source folder whose files will be recursively added to the archive.
+  /// </param>
+  /// <param name="archivepath">
+  /// The target path of the archive file. The file extension is validated
+  /// by <see cref="ServicesCompress.CheckFCPFileExtensionAsync"/>.
+  /// </param>
+  /// <param name="compressiontype">
+  /// The desired compression type as a byte value.
+  /// </param>
+  /// <param name="buffersize">
+  /// Size of the buffer in bytes used for stream copy operations.
+  /// Default: 81920.
+  /// </param>
+  /// <param name="compresslevel">
+  /// Compression level, e.g. <see cref="CompressionLevel.Optimal"/>.
+  /// </param>
+  /// <returns>
+  /// A task representing the asynchronous archiving operation.
+  /// </returns>
+  /// <exception cref="DirectoryNotFoundException">
+  /// Thrown if the source folder does not exist.
+  /// </exception>
   public async static Task PackArchivAsync(
      string srcfolder, string archivepath, byte compressiontype,
      int buffersize = 81920, CompressionLevel compresslevel = CompressionLevel.Optimal)

@@ -1,14 +1,14 @@
 ﻿
-using System.IO.Compression;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
+using System.IO.Compression;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 
 namespace michele.natale.Compresses;
 
-using Services;
 using System;
+using Services;
 
 partial class FileCompressPackage
 {
