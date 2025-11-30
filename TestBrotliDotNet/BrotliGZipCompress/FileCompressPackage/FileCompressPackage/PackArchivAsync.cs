@@ -1,14 +1,15 @@
 ﻿
+
 using System.Text;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-
 namespace michele.natale.Compresses;
 
-using System;
+
 using Services;
+
 
 partial class FileCompressPackage
 {
@@ -36,12 +37,12 @@ partial class FileCompressPackage
   /// Compression level, e.g. <see cref="CompressionLevel.Optimal"/>.
   /// </param>
   /// <returns>
-  /// A task representing the asynchronous archiving operation.
+  /// A Task<(long TotalFileSize, double TotalRatio)> representing the asynchronous archiving operation.
   /// </returns>
   /// <exception cref="DirectoryNotFoundException">
   /// Thrown if the source folder does not exist.
   /// </exception>
-  public async static Task PackArchivAsync(
+  public async static Task<(long TotalFileSize, long TotalCompressSize)> PackArchivAsync(
       string srcfolder, string archivepath, CompressionType compressiontype,
       int buffersize = 81920, CompressionLevel compresslevel = CompressionLevel.Optimal) =>
         await PackArchivAsync(srcfolder, archivepath, (byte)compressiontype, buffersize, compresslevel);
@@ -69,12 +70,12 @@ partial class FileCompressPackage
   /// Compression level, e.g. <see cref="CompressionLevel.Optimal"/>.
   /// </param>
   /// <returns>
-  /// A task representing the asynchronous archiving operation.
+  /// A Task<(long TotalFileSize, double TotalRatio)> representing the asynchronous archiving operation.
   /// </returns>
   /// <exception cref="DirectoryNotFoundException">
   /// Thrown if the source folder does not exist.
   /// </exception>
-  public async static Task PackArchivAsync(
+  public async static Task<(long TotalFileSize, long TotalCompressSize)> PackArchivAsync(
      string srcfolder, string archivepath, byte compressiontype,
      int buffersize = 81920, CompressionLevel compresslevel = CompressionLevel.Optimal)
   {
@@ -85,15 +86,20 @@ partial class FileCompressPackage
     await using var fsout = new FileStream(archiv.FullName, FileMode.Create, FileAccess.Write);
     Console.WriteLine($"© FileCompressPackage 2025 - ARCHIV PACKAGE - Created by © Michele Natale 2025");
 
+    var filesizesum = 0L;
     foreach (var fisrc in new DirectoryInfo(srcfolder).GetFiles("*.*", SearchOption.AllDirectories))
     {
+      filesizesum += fisrc.Length;
       var idx = fisrc.FullName.IndexOf(srcfolder);
       var fpath = fisrc.FullName.Substring(idx);
       await using var fsin = new FileStream(fisrc.FullName, FileMode.Open, FileAccess.Read);
       await WriteArchivAsync(fsin, fsout, fpath, compressiontype, buffersize, compresslevel);
     }
 
-    Console.WriteLine();
+    await fsout.FlushAsync();
+
+    var destlength = fsout.Length;
+    return (filesizesum, destlength);
   }
 
   private async static Task WriteArchivAsync(

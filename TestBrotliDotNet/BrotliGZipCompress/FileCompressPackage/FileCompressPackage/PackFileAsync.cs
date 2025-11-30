@@ -1,13 +1,13 @@
 ﻿
+
 using System.Text;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-
 namespace michele.natale.Compresses;
 
-using System;
+
 using Services;
 
 partial class FileCompressPackage
@@ -34,7 +34,7 @@ partial class FileCompressPackage
   /// Default is <see cref="CompressionLevel.Optimal"/>.
   /// </param>
   /// <returns>
-  /// A task that represents the asynchronous packing operation. 
+  /// A Task<(long TotalFileSize, double TotalRatio)> that represents the asynchronous packing operation. 
   /// The task completes when all files have been compressed and written to the archive.
   /// </returns>
   /// <remarks>
@@ -59,7 +59,7 @@ partial class FileCompressPackage
   /// await PackFileAsync(files, archive, compressiontype: 2);
   /// </code>
   /// </example>
-  public async static Task PackFileAsync(
+  public async static Task<(long TotalFileSize, long TotalCompressSize)> PackFileAsync(
       string[] filepathlist, string archivepath, CompressionType compressiontype,
       int buffersize = 81920, CompressionLevel compresslevel = CompressionLevel.Optimal) =>
         await PackFileAsync(filepathlist, archivepath, (byte)compressiontype, buffersize, compresslevel);
@@ -86,7 +86,7 @@ partial class FileCompressPackage
   /// Default is <see cref="CompressionLevel.Optimal"/>.
   /// </param>
   /// <returns>
-  /// A task that represents the asynchronous packing operation. 
+  /// A Task<(long TotalFileSize, double TotalRatio)> that represents the asynchronous packing operation. 
   /// The task completes when all files have been compressed and written to the archive.
   /// </returns>
   /// <remarks>
@@ -111,7 +111,7 @@ partial class FileCompressPackage
   /// await PackFileAsync(files, archive, compressiontype: 2);
   /// </code>
   /// </example>
-  public async static Task PackFileAsync(
+  public async static Task<(long TotalFileSize, long TotalCompressSize)> PackFileAsync(
       string[] filepathlist, string archivepath, byte compressiontype,
       int buffersize = 81920, CompressionLevel compresslevel = CompressionLevel.Optimal)
   {
@@ -119,13 +119,18 @@ partial class FileCompressPackage
     await using var fsout = new FileStream(archiv.FullName, FileMode.Create, FileAccess.Write);
     Console.WriteLine($"© FileCompressPackage 2025 - FILE PACKAGE - Created by © Michele Natale 2025");
 
+    var filesizesum = 0L;
     foreach (var src in filepathlist)
     {
       await using var fsin = new FileStream(src, FileMode.Open, FileAccess.Read);
       await WriteFileAsync(fsin, fsout, src, compressiontype, buffersize, compresslevel);
+      filesizesum += fsin.Length;
     }
 
-    Console.WriteLine();
+    await fsout.FlushAsync();
+
+    var destlength = fsout.Length;
+    return (filesizesum, destlength);
   }
 
 
@@ -145,7 +150,8 @@ partial class FileCompressPackage
 
     var compresslength = ct switch
     {
-      CompressionType.None => await ServicesCompress.CopyChunkAsync(input, output, 0, input.Length, buffersize),
+      CompressionType.None => await ServicesCompress.CopyChunkAsync(
+        input, output, 0, input.Length, buffersize),
       CompressionType.GZip => await CompressedNet
         .CompressGZipAsyncSpec(input, output, buffersize, compresslevel),
       CompressionType.Brotli => await CompressedNet

@@ -16,7 +16,7 @@ public class FileCompressPackageTest
     await TestPackGZipFileAsync();
     await TestPackBrotliFileAsync();
 
-    string srcfolder = "sourcefolder"; 
+    string srcfolder = "sourcefolder";
     await PreparationAsync(srcfolder);
     await TestPackNoneArchivAsync(srcfolder);
     await TestPackGZipArchivAsync(srcfolder);
@@ -32,7 +32,10 @@ public class FileCompressPackageTest
 
     // Pack Files
     string[] packlist = ["data2.txt", "data3.txt", "data2.txt", "data3.txt"];
-    await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.None);
+    var (totalfilesize, totalcompresssize) = await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.None);
+
+    //With HeaderInformation
+    Console.WriteLine($"Total File Size = {totalfilesize} Bytes, Total Compression Size = {totalcompresssize} Bytes and Total Compression Ratio = {totalcompresssize/(double)totalfilesize}\n");
 
     // UnPack Files
     await FileCompressPackage.UnPackAsync(archivepath, outputfolder);
@@ -49,7 +52,8 @@ public class FileCompressPackageTest
 
     // Pack Files
     string[] packlist = ["data2.txt", "data3.txt", "data2.txt", "data3.txt"];
-    await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.GZip);
+    var (totalfilesize, totalcompresssize) = await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.GZip);
+    Console.WriteLine($"Total File Size = {totalfilesize} Bytes, Total Compression Size = {totalcompresssize} Bytes and Total Compression Ratio = {totalcompresssize / (double)totalfilesize}\n");
 
     // UnPack Files
     await FileCompressPackage.UnPackAsync(archivepath, outputfolder);
@@ -66,7 +70,8 @@ public class FileCompressPackageTest
 
     // Pack Files
     string[] packlist = ["data2.txt", "data3.txt", "data2.txt", "data3.txt"];
-    await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.Brotli);
+    var (totalfilesize, totalcompresssize) = await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.Brotli);
+    Console.WriteLine($"Total File Size = {totalfilesize} Bytes, Total Compression Size = {totalcompresssize} Bytes and Total Compression Ratio = {totalcompresssize / (double)totalfilesize}\n");
 
     // UnPack Files
     await FileCompressPackage.UnPackAsync(archivepath, outputfolder);
@@ -82,7 +87,10 @@ public class FileCompressPackageTest
     string outputfolder = "output", archivepath = "test.fcp";
 
     // Pack Folder
-    await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.None);
+    var (totalfilesize, totalcompresssize) = await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.None);
+
+    //With HeaderInformation
+    Console.WriteLine($"Total File Size = {totalfilesize} Bytes, Total Compression Size = {totalcompresssize} Bytes and Total Compression Ratio = {totalcompresssize / (double)totalfilesize}\n");
 
     // UnPack Archiv
     await FileCompressPackage.UnPackAsync(archivepath, outputfolder);
@@ -98,7 +106,9 @@ public class FileCompressPackageTest
     string outputfolder = "output", archivepath = "test.fcp";
 
     // Pack Folder
-    await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.GZip);
+    var (totalfilesize, totalcompresssize) = await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.GZip);
+    Console.WriteLine($"Total File Size = {totalfilesize} Bytes, Total Compression Size = {totalcompresssize} Bytes and Total Compression Ratio = {totalcompresssize / (double)totalfilesize}\n");
+
 
     // UnPack Archiv
     await FileCompressPackage.UnPackAsync(archivepath, outputfolder);
@@ -114,7 +124,8 @@ public class FileCompressPackageTest
     string outputfolder = "output", archivepath = "test.fcp";
 
     // Pack Folder
-    await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.Brotli);
+    var (totalfilesize, totalcompresssize) = await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.Brotli);
+    Console.WriteLine($"Total File Size = {totalfilesize} Bytes, Total Compression Size = {totalcompresssize} Bytes and Total Compression Ratio = {totalcompresssize / (double)totalfilesize}\n");
 
     // UnPack Archiv
     await FileCompressPackage.UnPackAsync(archivepath, outputfolder);

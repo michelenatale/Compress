@@ -1,7 +1,8 @@
 ﻿
 Imports System.IO
-Imports michele.natale.Compresses
+Imports System.Numerics
 Imports System.Security.Cryptography
+Imports michele.natale.Compresses
 
 Namespace michele.natale.Tests
   Public Class FileCompressPackageTest
@@ -24,7 +25,12 @@ Namespace michele.natale.Tests
     Private Shared Async Function TestPackNoneFileAsync() As Task
       Dim outputfolder As String = "output", archivepath As String = "test.fcp"
       Dim packlist = New String() {"data2.txt", "data3.txt", "data2.txt", "data3.txt"}
-      Await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.None)
+      Dim compressdata = Await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.None)
+      Dim totalfilesize = compressdata.TotalFileSize, totalcompresssize = compressdata.TotalCompressSize
+
+      'With HeaderInformation
+      Console.WriteLine($"Total File Size = {totalfilesize} Bytes, Total Compression Size = {totalcompresssize}. and Total Compression Ratio = {totalcompresssize / CDbl(totalfilesize) }{Environment.NewLine}")
+
       Await FileCompressPackage.UnPackAsync(archivepath, outputfolder)
       If Not FileEqualsSpec(packlist, outputfolder) Then Throw New Exception()
       Console.WriteLine()
@@ -33,7 +39,10 @@ Namespace michele.natale.Tests
     Private Shared Async Function TestPackGZipFileAsync() As Task
       Dim outputfolder As String = "output", archivepath As String = "test.fcp"
       Dim packlist = New String() {"data2.txt", "data3.txt", "data2.txt", "data3.txt"}
-      Await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.GZip)
+      Dim compressdata = Await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.GZip)
+      Dim totalfilesize = compressdata.TotalFileSize, totalcompresssize = compressdata.TotalCompressSize
+      Console.WriteLine($"Total File Size = {totalfilesize} Bytes, Total Compression Size = {totalcompresssize}. and Total Compression Ratio = {totalcompresssize / CDbl(totalfilesize) }{Environment.NewLine}")
+
       Await FileCompressPackage.UnPackAsync(archivepath, outputfolder)
       If Not FileEqualsSpec(packlist, outputfolder) Then Throw New Exception()
       Console.WriteLine()
@@ -42,7 +51,10 @@ Namespace michele.natale.Tests
     Private Shared Async Function TestPackBrotliFileAsync() As Task
       Dim outputfolder As String = "output", archivepath As String = "test.fcp"
       Dim packlist = New String() {"data2.txt", "data3.txt", "data2.txt", "data3.txt"}
-      Await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.Brotli)
+      Dim compressdata = Await FileCompressPackage.PackFileAsync(packlist, archivepath, CompressionType.Brotli)
+      Dim totalfilesize = compressdata.TotalFileSize, totalcompresssize = compressdata.TotalCompressSize
+      Console.WriteLine($"Total File Size = {totalfilesize} Bytes, Total Compression Size = {totalcompresssize}. and Total Compression Ratio = {totalcompresssize / CDbl(totalfilesize) }{Environment.NewLine}")
+
       Await FileCompressPackage.UnPackAsync(archivepath, outputfolder)
       If Not FileEqualsSpec(packlist, outputfolder) Then Throw New Exception()
       Console.WriteLine()
@@ -53,7 +65,11 @@ Namespace michele.natale.Tests
       Dim archivepath As String = "test.fcp"
 
       ' Pack Folder
-      Await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.None)
+      Dim compressdata = Await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.None)
+      Dim totalfilesize = compressdata.TotalFileSize, totalcompresssize = compressdata.TotalCompressSize
+
+      'With HeaderInformation
+      Console.WriteLine($"Total File Size = {totalfilesize} Bytes, Total Compression Size = {totalcompresssize}. and Total Compression Ratio = {totalcompresssize / CDbl(totalfilesize) }{Environment.NewLine}")
 
       ' UnPack Archiv
       Await FileCompressPackage.UnPackAsync(archivepath, outputfolder)
@@ -70,7 +86,9 @@ Namespace michele.natale.Tests
       Dim archivepath As String = "test.fcp"
 
       ' Pack Folder
-      Await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.GZip)
+      Dim compressdata = Await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.GZip)
+      Dim totalfilesize = compressdata.TotalFileSize, totalcompresssize = compressdata.TotalCompressSize
+      Console.WriteLine($"Total File Size = {totalfilesize} Bytes, Total Compression Size = {totalcompresssize}. and Total Compression Ratio = {totalcompresssize / CDbl(totalfilesize) }{Environment.NewLine}")
 
       ' UnPack Archiv
       Await FileCompressPackage.UnPackAsync(archivepath, outputfolder)
@@ -87,7 +105,9 @@ Namespace michele.natale.Tests
       Dim archivepath As String = "test.fcp"
 
       ' Pack Folder
-      Await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.Brotli)
+      Dim compressdata = Await FileCompressPackage.PackArchivAsync(srcfolder, archivepath, CompressionType.Brotli)
+      Dim totalfilesize = compressdata.TotalFileSize, totalcompresssize = compressdata.TotalCompressSize
+      Console.WriteLine($"Total File Size = {totalfilesize} Bytes, Total Compression Size = {totalcompresssize}. and Total Compression Ratio = {totalcompresssize / CDbl(totalfilesize) }{Environment.NewLine}")
 
       ' UnPack Archiv
       Await FileCompressPackage.UnPackAsync(archivepath, outputfolder)
@@ -108,14 +128,14 @@ Namespace michele.natale.Tests
 
     Private Shared Function FileEqualsSpec(srcfolder As String, destfolder As String) As Boolean
       Dim left = New DirectoryInfo(srcfolder) _
-          .GetFiles("*.*", SearchOption.AllDirectories) _
-          .OrderBy(Function(x) x.FullName) _
-          .ToArray()
+                .GetFiles("*.*", SearchOption.AllDirectories) _
+                .OrderBy(Function(x) x.FullName) _
+                .ToArray()
 
       Dim right = New DirectoryInfo(destfolder) _
-          .GetFiles("*.*", SearchOption.AllDirectories) _
-          .OrderBy(Function(x) x.FullName) _
-          .ToArray()
+                .GetFiles("*.*", SearchOption.AllDirectories) _
+                .OrderBy(Function(x) x.FullName) _
+                .ToArray()
 
       If EqualitySpec(left, right, srcfolder) Then
         Dim length = left.Length
