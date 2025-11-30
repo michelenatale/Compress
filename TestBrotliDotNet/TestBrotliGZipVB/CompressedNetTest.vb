@@ -23,11 +23,15 @@ Namespace michele.natale.Tests
       TestGzipFileStream()
       Await TestGzipFileStreamAsync()
 
+      'Await TestGzipStressAsync() 'Approx 135 MB
+
       TestBrotli()
       Await TestBrotliAsync()
 
       TestBrotliStream()
       Await TestBrotliStreamAsync()
+
+      'Await TestBrotliStressAsync() 'Approx 135 MB
 
       Console.WriteLine()
     End Function
@@ -278,10 +282,9 @@ Namespace michele.natale.Tests
 
     Private Shared Async Function TestBrotliStreamAsync() As Task
       Dim src As String = "data.txt"
-      Dim dest As String = "datacompress"
       Dim destr As String = "datar.txt"
-      File.Delete(dest)
-      File.Delete(destr)
+      Dim dest As String = "datacompress"
+      File.Delete(dest) : File.Delete(destr)
 
       'Brotli Stream Async
       Console.WriteLine("Brotli Stream Async")

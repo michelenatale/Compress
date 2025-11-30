@@ -166,12 +166,14 @@ public class FileCompressPackageTest
 
   private static async Task FinishAsync(string srcfolder)
   {
+    Console.WriteLine($"The source directory is deleted again.\n");
     if (Directory.Exists(srcfolder))
       await Task.Run(() => Directory.Delete(srcfolder, true));
   }
 
   private static async Task PreparationAsync(string srcfolder)
   {
+    Console.WriteLine($"A SourceFolder with many files and directories is created.\n");
     string[] packlist = { "data.txt", "data2.txt", "data3.txt" };
     await CreateRngFolders(srcfolder, packlist);
   }

@@ -141,12 +141,14 @@ Namespace michele.natale.Tests
     End Function
 
     Private Shared Async Function FinishAsync(srcfolder As String) As Task
+      Console.WriteLine($"The source directory is deleted again.{Environment.NewLine}")
       If Directory.Exists(srcfolder) Then
         Await Task.Run(Sub() Directory.Delete(srcfolder, True))
       End If
     End Function
 
     Private Shared Async Function PreparationAsync(srcfolder As String) As Task
+      Console.WriteLine($"A SourceFolder with many files and directories is created.{Environment.NewLine}")
       Dim packlist As String() = {"data.txt", "data2.txt", "data3.txt"}
       Await CreateRngFolders(srcfolder, packlist)
     End Function
